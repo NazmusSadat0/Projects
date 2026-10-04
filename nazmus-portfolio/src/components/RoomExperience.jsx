@@ -1,12 +1,18 @@
-import { Component, useRef } from "react";
+import { Component } from "react";
 import { Canvas } from "@react-three/fiber";
 
+import {
+  ACESFilmicToneMapping,
+  PCFSoftShadowMap,
+} from "three";
+
 import CameraRig, {
-  INITIAL_ANGLE,
-  clampAngle,
+  EYE_POSITION,
 } from "../scene/CameraRig";
 
 import Room from "../scene/Room";
+import RoomDetails from "../scene/RoomDetails";
+import InteriorShell from "../scene/InteriorShell";
 
 class SceneErrorBoundary extends Component {
   state = {
@@ -23,8 +29,8 @@ class SceneErrorBoundary extends Component {
     if (this.state.error) {
       return (
         <div className="fallback" role="alert">
-          The 3D room could not start. Try enabling browser
-          hardware acceleration and reload.
+          The room could not start. Please reload the page
+          and check the browser console for the error.
         </div>
       );
     }
@@ -34,45 +40,31 @@ class SceneErrorBoundary extends Component {
 }
 
 export default function RoomExperience() {
-  const angle = useRef(INITIAL_ANGLE);
-
-  function rotate(direction) {
-    angle.current = clampAngle(
-      angle.current + direction * 0.15
-    );
-  }
-
-  function handleKeyDown(event) {
-    if (
-      event.key === "ArrowLeft" ||
-      event.key === "ArrowRight"
-    ) {
-      event.preventDefault();
-
-      rotate(event.key === "ArrowLeft" ? -1 : 1);
-    }
-  }
-
   return (
     <main
       className="experience"
-      aria-label="Nazmus's interactive room"
-      tabIndex={0}
-      onKeyDown={handleKeyDown}
+      aria-label="Inside Nazmus's room. Drag or swipe horizontally to look left and right."
     >
       <SceneErrorBoundary>
         <Canvas
-          orthographic
+          key="interior-perspective-view"
           shadows
           dpr={[1, 1.5]}
           camera={{
-            position: [7, 10, 12],
-            zoom: 70,
-            near: 0.1,
-            far: 100,
+            position: EYE_POSITION,
+            rotation: [-0.12, 0, 0],
+            fov: 50,
+            near: 0.04,
+            far: 40,
           }}
           gl={{
             antialias: true,
+            alpha: false,
+          }}
+          onCreated={({ gl }) => {
+            gl.toneMapping = ACESFilmicToneMapping;
+            gl.toneMappingExposure = 1;
+            gl.shadowMap.type = PCFSoftShadowMap;
           }}
           fallback={
             <div className="fallback">
@@ -82,75 +74,58 @@ export default function RoomExperience() {
         >
           <color
             attach="background"
-            args={["#f4ecdf"]}
+            args={["#eee6d8"]}
           />
 
-          <ambientLight intensity={0.65} />
+          {/* General bounced-light approximation */}
+          <ambientLight intensity={0.45} />
 
           <hemisphereLight
-            args={["#fff6e7", "#8b7964", 1.7]}
+            args={["#fff1db", "#8b7760", 1.15]}
           />
 
-          {/* Main warm light */}
+          {/* Main light positioned inside the enclosed room */}
           <directionalLight
-            position={[2, 9, 6]}
-            intensity={3.1}
-            color="#fff0d5"
+            position={[1.4, 3.15, 1.7]}
+            intensity={2.2}
+            color="#ffe5c1"
             castShadow
             shadow-mapSize-width={2048}
             shadow-mapSize-height={2048}
-            shadow-camera-left={-8}
-            shadow-camera-right={8}
-            shadow-camera-top={8}
-            shadow-camera-bottom={-8}
-            shadow-camera-near={0.5}
-            shadow-camera-far={30}
-            shadow-normalBias={0.035}
+            shadow-camera-left={-6}
+            shadow-camera-right={6}
+            shadow-camera-top={6}
+            shadow-camera-bottom={-6}
+            shadow-camera-near={0.1}
+            shadow-camera-far={18}
+            shadow-normalBias={0.025}
+            shadow-bias={-0.0001}
           />
 
-          {/* Cooler fill light */}
-          <directionalLight
-            position={[-3, 5, -2]}
-            intensity={0.7}
-            color="#c6e0ec"
+          {/* Cooler light around the window */}
+          <pointLight
+            position={[-0.3, 2.8, -2.45]}
+            intensity={3}
+            distance={9}
+            decay={2}
+            color="#d4e5ec"
+          />
+
+          {/* Gentle warm fill near the lounge */}
+          <pointLight
+            position={[2.8, 2.7, 0.6]}
+            intensity={2}
+            distance={7}
+            decay={2}
+            color="#ffe4bf"
           />
 
           <Room />
-          <CameraRig angle={angle} />
+          <RoomDetails />
+          <InteriorShell />
+          <CameraRig />
         </Canvas>
       </SceneErrorBoundary>
-
-      <nav
-        className="rotation-controls"
-        aria-label="Room rotation"
-      >
-        <button
-          type="button"
-          onClick={() => rotate(-1)}
-          aria-label="Rotate view left"
-          title="Rotate left"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M14 6l-6 6 6 6" />
-          </svg>
-        </button>
-
-        <span
-          className="control-divider"
-          aria-hidden="true"
-        />
-
-        <button
-          type="button"
-          onClick={() => rotate(1)}
-          aria-label="Rotate view right"
-          title="Rotate right"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M10 6l6 6-6 6" />
-          </svg>
-        </button>
-      </nav>
     </main>
   );
 }
