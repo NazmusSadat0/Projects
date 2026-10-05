@@ -6,16 +6,19 @@ const labels = [
   {
     id: "projects",
     text: "Projects",
+    number: "01",
     position: [-0.25, 2.95, -2.15],
   },
   {
     id: "about",
     text: "About Me",
+    number: "02",
     position: [-3.25, 2.35, -0.5],
   },
   {
     id: "contact",
     text: "Contact",
+    number: "03",
     position: [2, 2.25, -1.95],
   },
 ];
@@ -27,7 +30,6 @@ export default function RoomLabels({ elements }) {
   const { camera, size } = useThree();
 
   useFrame(() => {
-    // CameraRig updates the camera before this callback.
     camera.updateMatrixWorld();
 
     labels.forEach((label, index) => {
@@ -48,21 +50,24 @@ export default function RoomLabels({ elements }) {
       const y = (-point.y * 0.5 + 0.5) * size.height;
 
       const halfWidth = element.offsetWidth / 2;
-      const labelHeight = element.offsetHeight;
 
       const visible =
         cameraSpace.current.z < 0 &&
         point.z >= -1 &&
         point.z <= 1 &&
-        x > halfWidth + 12 &&
-        x < size.width - halfWidth - 12 &&
-        y > labelHeight + 12 &&
-        y < size.height - 24;
+        x > 0 && x < size.width &&
+        y > 0 && y < size.height;
 
-      element.style.visibility = visible ? "visible" : "hidden";
+      // Keep readable cards inside the viewport as their objects approach an edge.
+      const cardX = Math.max(halfWidth + 12, Math.min(x, size.width - halfWidth - 12));
+      const cardY = Math.max(element.offsetHeight + 12, Math.min(y, size.height - 24));
+
+      element.style.visibility = visible
+        ? "visible"
+        : "hidden";
 
       element.style.transform =
-        `translate3d(${x}px, ${y}px, 0) ` +
+        `translate3d(${cardX}px, ${cardY}px, 0) ` +
         "translate(-50%, -100%)";
     });
   }, 0.5);
@@ -70,24 +75,54 @@ export default function RoomLabels({ elements }) {
   return null;
 }
 
-// HTML must be rendered by React DOM, outside the Three Fiber canvas.
-export function RoomLabelOverlay({ elements }) {
+export function RoomLabelOverlay({
+  elements,
+  hovered,
+  hidden = false,
+  onOpen,
+  onHover,
+}) {
   return (
-    <div className="room-label-layer" aria-hidden="true">
+    <div
+      className={[
+        "room-label-layer",
+        "object-markers",
+        hidden ? "markers-hidden" : "",
+      ].join(" ")}
+      aria-label="Explore the room"
+      inert={hidden}
+    >
       {labels.map((label, index) => (
         <div
           key={label.id}
-          className="room-label-anchor"
+          className={[
+            "room-label-anchor",
+            hovered === label.id ? "marker-active" : "",
+          ].join(" ")}
           ref={(element) => {
             elements.current[index] = element;
           }}
         >
-          <span className="room-label">
-            <span className="room-label-dot" />
-            {label.text}
-          </span>
+          <button
+            type="button"
+            className="object-marker-title"
+            onClick={() => { onHover(null); onOpen(label.id); }}
+            onPointerEnter={() => onHover(label.id)}
+            onPointerLeave={() => onHover(null)}
+            onFocus={() => onHover(label.id)}
+            onBlur={() => onHover(null)}
+            aria-label={`Open ${label.text}`}
+          >
+            <span className="object-marker-number">
+              {label.number}
+            </span>
 
-          <span className="room-label-stem" />
+            <span>{label.text}</span>
+            <span className="object-marker-arrow" aria-hidden="true">↗</span>
+          </button>
+
+          <span className="object-marker-line" />
+          <span className="object-marker-point" />
         </div>
       ))}
     </div>

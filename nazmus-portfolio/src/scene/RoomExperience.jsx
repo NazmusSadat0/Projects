@@ -4,6 +4,7 @@ import {
   useCallback,
   useRef,
   useState,
+  useSyncExternalStore,
 } from "react";
 
 import { Canvas } from "@react-three/fiber";
@@ -19,15 +20,32 @@ import CameraRig, {
 
 import RoomModel from "../scene/RoomModel";
 import RoomFinish from "../scene/RoomFinish";
+import RoomInteractions from "../scene/RoomInteractions";
 
 import RoomLabels, {
   RoomLabelOverlay,
 } from "./RoomLabels";
 
+import RoomSections from "../components/RoomSections.jsx";
+
+const MOBILE_QUERY = "(width < 700px)";
+
+function subscribeToScreenWidth(onChange) {
+  const query = window.matchMedia(MOBILE_QUERY);
+  query.addEventListener("change", onChange);
+  return () => query.removeEventListener("change", onChange);
+}
+
+function isMobileScreen() {
+  return window.matchMedia(MOBILE_QUERY).matches;
+}
+
+function desktopScreenSnapshot() {
+  return false;
+}
+
 class SceneErrorBoundary extends Component {
-  state = {
-    error: null,
-  };
+  state = { error: null };
 
   static getDerivedStateFromError(error) {
     return { error };
@@ -59,11 +77,22 @@ class SceneErrorBoundary extends Component {
 
 export default function RoomExperience() {
   const labelElements = useRef([]);
+  const mobileScreen = useSyncExternalStore(
+    subscribeToScreenWidth,
+    isMobileScreen,
+    desktopScreenSnapshot,
+  );
 
   const [ready, setReady] = useState(false);
+  const [hovered, setHovered] = useState(null);
+  const [section, setSection] = useState(null);
 
   const handleReady = useCallback(() => {
     setReady(true);
+  }, []);
+
+  const closeSection = useCallback(() => {
+    setSection(null);
   }, []);
 
   return (
@@ -72,13 +101,14 @@ export default function RoomExperience() {
         "experience",
         "room-upgrade",
         ready ? "room-ready" : "",
+        hovered ? "has-room-target" : "",
       ].join(" ")}
       aria-label="Drag or swipe to look around the room"
     >
       <SceneErrorBoundary>
         <Canvas
           shadows
-          dpr={[1, 2]}
+          dpr={mobileScreen ? 1 : [1, 1.35]}
           camera={{
             position: EYE_POSITION,
             fov: 50,
@@ -116,8 +146,8 @@ export default function RoomExperience() {
             intensity={2.1}
             color="#fff0d8"
             castShadow
-            shadow-mapSize-width={1024}
-            shadow-mapSize-height={1024}
+            shadow-mapSize-width={512}
+            shadow-mapSize-height={512}
             shadow-camera-left={-5}
             shadow-camera-right={5}
             shadow-camera-top={5}
@@ -145,7 +175,14 @@ export default function RoomExperience() {
           />
 
           <Suspense fallback={null}>
-            <RoomModel onReady={handleReady} />
+            <RoomInteractions
+              ready={ready}
+              hovered={hovered}
+              onHover={setHovered}
+              onOpen={setSection}
+            >
+              <RoomModel onReady={handleReady} />
+            </RoomInteractions>
 
             <RoomLabels elements={labelElements} />
           </Suspense>
@@ -154,7 +191,35 @@ export default function RoomExperience() {
           <RoomFinish />
         </Canvas>
 
-        <RoomLabelOverlay elements={labelElements} />
+        <RoomLabelOverlay
+          elements={labelElements}
+          hovered={hovered}
+          hidden={Boolean(section)}
+          onOpen={setSection}
+          onHover={setHovered}
+        />
+
+        {section && (
+          <RoomSections
+            section={section}
+            onClose={closeSection}
+          />
+        )}
+
+        {/* Appears only when reached using keyboard focus. */}
+        <nav
+          className="room-keyboard-nav"
+          aria-label="Portfolio sections"
+        >
+          {["projects", "about", "contact"].map((id) => (
+            <button
+              key={id}
+              onClick={() => setSection(id)}
+            >
+              {id === "about" ? "About me" : id}
+            </button>
+          ))}
+        </nav>
 
         {!ready && (
           <div className="room-loading" role="status">

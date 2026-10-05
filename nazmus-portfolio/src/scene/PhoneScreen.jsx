@@ -107,6 +107,7 @@ export default function PhoneScreen() {
 
   return (
     <group
+      name="ContactScreen"
       position={[2, 1.45, -2.04]}
       rotation={[0, -0.12, 0]}
     >

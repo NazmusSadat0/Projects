@@ -55,9 +55,9 @@ export default function AnimatedMonitor() {
       const count = still
         ? all.length
         : Math.min(
-            all.length,
-            Math.floor((time % 24) * 22)
-          );
+          all.length,
+          Math.floor((time % 24) * 22)
+        );
 
       const visible = all.slice(0, count).split("\n");
 
@@ -144,7 +144,11 @@ export default function AnimatedMonitor() {
   });
 
   return (
-    <mesh position={[-0.25, 2.24, -2.16]}>
+    <mesh
+      name="ProjectsScreen"
+      position={[-0.25, 2.24, -2.16]}
+    >
+
       <planeGeometry args={[1.76, 0.94]} />
 
       <meshBasicMaterial

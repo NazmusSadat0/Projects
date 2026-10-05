@@ -38,11 +38,11 @@ export default function RoomFinish() {
 
     const composer = new EffectComposer(gl, target);
 
-    const ao = new SSAOPass(scene, camera, 1, 1, 16);
+    const ao = new SSAOPass(scene, camera, 1, 1, 8);
 
-    ao.kernelRadius = 0.22;
+    ao.kernelRadius = 0.14;
     ao.minDistance = 0.001;
-    ao.maxDistance = 0.07;
+    ao.maxDistance = 0.05;
 
     const output = new OutputPass();
 
@@ -68,7 +68,7 @@ export default function RoomFinish() {
   useEffect(() => {
     if (!pipeline.current) return;
 
-    pipeline.current.setPixelRatio(gl.getPixelRatio());
+    pipeline.current.setPixelRatio(Math.min(gl.getPixelRatio(), 1.25));
     pipeline.current.setSize(size.width, size.height);
   }, [gl, size.width, size.height, viewport.dpr]);
 
