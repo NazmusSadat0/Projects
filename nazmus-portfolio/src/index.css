@@ -176,7 +176,8 @@ body {
   background: #e4e4dc;
 }
 
-/* Fade the canvas in once the model is prepared. */
+/* Fade the canvas in once the model is prepared. 
+Delete these 3 things later 
 .room-upgrade > div:first-child {
   opacity: 0;
   transition: opacity 800ms ease;
@@ -189,7 +190,7 @@ body {
 .room-upgrade:has(.fallback) > div:first-child {
   opacity: 1;
 }
-
+*/
 .room-label-layer {
   position: absolute;
   inset: 0;

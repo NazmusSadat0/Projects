@@ -1,13 +1,60 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>nazmus-portfolio</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>nazmus-portfolio</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      background: #13271f;
+    }
+
+    .initial-room-loader {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-content: center;
+      text-align: center;
+
+      background: radial-gradient(ellipse at center,
+          #233c32,
+          #13271f 60%,
+          #0d1b16);
+
+      color: #f3eddf;
+    }
+
+    .initial-room-loader h1 {
+      margin: 0 0 18px;
+      font: 400 52px Georgia, serif;
+      letter-spacing: -2px;
+    }
+
+    .initial-room-loader p {
+      margin: 0;
+      color: #a8b5a5;
+      font: 11px system-ui, sans-serif;
+      letter-spacing: 2px;
+    }
+
+    .initial-room-loader span {
+      color: #d7a96d;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root">
+    <div class="initial-room-loader" role="status">
+      <h1>Step inside<span>.</span></h1>
+      <p>LOADING YOUR ROOM</p>
+    </div>
+  </div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
 </html>

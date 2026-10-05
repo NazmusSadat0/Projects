@@ -27,6 +27,7 @@ import RoomLabels, {
 } from "./RoomLabels";
 
 import RoomSections from "../components/RoomSections.jsx";
+import RoomPreloader from "../components/RoomPreLoader.jsx";
 
 const MOBILE_QUERY = "(width < 700px)";
 
@@ -221,11 +222,7 @@ export default function RoomExperience() {
           ))}
         </nav>
 
-        {!ready && (
-          <div className="room-loading" role="status">
-            Loading room…
-          </div>
-        )}
+        <RoomPreloader ready={ready} />
       </SceneErrorBoundary>
     </main>
   );
