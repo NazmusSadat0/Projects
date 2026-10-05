@@ -1,64 +1,43 @@
-import { useEffect, useLayoutEffect, useRef } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+} from "react";
+
 import { useFrame, useThree } from "@react-three/fiber";
 import { MathUtils } from "three";
 
-// Fixed position near the entrance, inside the room.
+import useReducedMotion from "../hooks/useReducedMotion";
+
 export const EYE_POSITION = [0, 2.15, 2.55];
 
-// Slight downward gaze so the desk surface remains visible.
-const HEAD_PITCH = -0.12;
+const LIMIT = MathUtils.degToRad(89);
 
-// Turn approximately 89 degrees in either direction.
-const MAX_HEAD_TURN = MathUtils.degToRad(89);
+const clamp = (value) =>
+  MathUtils.clamp(value, -LIMIT, LIMIT);
 
-function clampYaw(value) {
-  return MathUtils.clamp(
-    value,
-    -MAX_HEAD_TURN,
-    MAX_HEAD_TURN
-  );
-}
-
-export default function CameraRig() {
+export default function CameraRig({ ready = true }) {
   const { camera, gl, size } = useThree();
 
-  const targetYaw = useRef(0);
-  const currentYaw = useRef(0);
-  const reducedMotion = useRef(false);
+  const target = useRef(0);
+  const yaw = useRef(0);
+  const intro = useRef(0);
 
-  // Set the initial interior viewpoint before rendering.
+  const reduced = useReducedMotion();
+
   useLayoutEffect(() => {
-    camera.position.set(...EYE_POSITION);
-    camera.rotation.set(HEAD_PITCH, 0, 0, "YXZ");
-    camera.zoom = 1;
-    camera.updateProjectionMatrix();
-  }, [camera]);
+    const aspect =
+      size.width / Math.max(size.height, 1);
 
-  // Adjust the lens for the screen shape, without fitting
-  // the entire room into the viewport.
-  useLayoutEffect(() => {
-    if (!camera.isPerspectiveCamera) return;
-
-    const aspect = size.width / Math.max(size.height, 1);
-    const portrait = aspect < 1;
-
-    const preferredVerticalFov = portrait ? 62 : 50;
-
-    // Prevent ultrawide screens from showing an excessively
-    // wide, distorted view of the room.
-    const maximumHorizontalFov = MathUtils.degToRad(80);
-
-    const verticalFovForHorizontalLimit =
-      MathUtils.radToDeg(
-        2 *
-          Math.atan(
-            Math.tan(maximumHorizontalFov / 2) / aspect
-          )
+    const horizontalLimit =
+      2 *
+      Math.atan(
+        Math.tan(MathUtils.degToRad(40)) / aspect
       );
 
     camera.fov = Math.min(
-      preferredVerticalFov,
-      verticalFovForHorizontalLimit
+      aspect < 1 ? 62 : 50,
+      MathUtils.radToDeg(horizontalLimit)
     );
 
     camera.aspect = aspect;
@@ -67,151 +46,115 @@ export default function CameraRig() {
   }, [camera, size.width, size.height]);
 
   useEffect(() => {
-    const preference = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    );
-
-    function updatePreference() {
-      reducedMotion.current = preference.matches;
-    }
-
-    updatePreference();
-
-    preference.addEventListener(
-      "change",
-      updatePreference
-    );
-
-    return () => {
-      preference.removeEventListener(
-        "change",
-        updatePreference
-      );
-    };
-  }, []);
-
-  useEffect(() => {
     const canvas = gl.domElement;
 
     let drag = null;
 
-    function pointerDown(event) {
-      if (!event.isPrimary || event.button !== 0) return;
+    function down(event) {
+      if (!event.isPrimary || event.button !== 0) {
+        return;
+      }
 
       drag = {
-        pointerId: event.pointerId,
-        startX: event.clientX,
-        startYaw: targetYaw.current,
+        id: event.pointerId,
+        x: event.clientX,
+        yaw: target.current,
       };
 
       canvas.setPointerCapture(event.pointerId);
       canvas.classList.add("is-dragging");
     }
 
-    function pointerMove(event) {
-      if (!drag || event.pointerId !== drag.pointerId) {
+    function move(event) {
+      if (!drag || event.pointerId !== drag.id) {
         return;
       }
 
-      const horizontalDistance =
-        event.clientX - drag.startX;
-
-      // Dragging across most of the screen turns the head
-      // roughly 100 degrees. Repeat swipes can reach the limit.
-      const radiansPerPixel =
+      const sensitivity =
         MathUtils.degToRad(100) /
         Math.max(canvas.clientWidth, 320);
 
-      // Grab-style movement: drag the scene to the right
-      // to reveal what is on your left.
-      targetYaw.current = clampYaw(
-        drag.startYaw +
-          horizontalDistance * radiansPerPixel
+      target.current = clamp(
+        drag.yaw +
+          (event.clientX - drag.x) * sensitivity
       );
     }
 
-    function endDrag(event) {
-      if (!drag || event.pointerId !== drag.pointerId) {
+    function end(event) {
+      if (
+        !drag ||
+        (event?.pointerId !== undefined &&
+          event.pointerId !== drag.id)
+      ) {
         return;
       }
 
-      const pointerId = drag.pointerId;
-
+      const id = drag.id;
       drag = null;
+
       canvas.classList.remove("is-dragging");
 
-      if (canvas.hasPointerCapture(pointerId)) {
-        canvas.releasePointerCapture(pointerId);
+      if (canvas.hasPointerCapture(id)) {
+        canvas.releasePointerCapture(id);
       }
     }
 
-    function cancelDrag() {
-      if (!drag) return;
+    canvas.addEventListener("pointerdown", down);
+    canvas.addEventListener("pointermove", move);
+    canvas.addEventListener("pointerup", end);
+    canvas.addEventListener("pointercancel", end);
+    canvas.addEventListener("lostpointercapture", end);
 
-      const pointerId = drag.pointerId;
-
-      drag = null;
-      canvas.classList.remove("is-dragging");
-
-      if (canvas.hasPointerCapture(pointerId)) {
-        canvas.releasePointerCapture(pointerId);
-      }
-    }
-
-    canvas.addEventListener("pointerdown", pointerDown);
-    canvas.addEventListener("pointermove", pointerMove);
-    canvas.addEventListener("pointerup", endDrag);
-    canvas.addEventListener("pointercancel", endDrag);
-    canvas.addEventListener("lostpointercapture", endDrag);
-
-    window.addEventListener("blur", cancelDrag);
+    window.addEventListener("blur", end);
 
     return () => {
-      canvas.removeEventListener(
-        "pointerdown",
-        pointerDown
-      );
-
-      canvas.removeEventListener(
-        "pointermove",
-        pointerMove
-      );
-
-      canvas.removeEventListener("pointerup", endDrag);
-      canvas.removeEventListener(
-        "pointercancel",
-        endDrag
-      );
+      canvas.removeEventListener("pointerdown", down);
+      canvas.removeEventListener("pointermove", move);
+      canvas.removeEventListener("pointerup", end);
+      canvas.removeEventListener("pointercancel", end);
 
       canvas.removeEventListener(
         "lostpointercapture",
-        endDrag
+        end
       );
 
-      window.removeEventListener("blur", cancelDrag);
+      window.removeEventListener("blur", end);
 
-      cancelDrag();
+      end();
     };
   }, [gl]);
 
   useFrame((_, delta) => {
-    currentYaw.current = reducedMotion.current
-      ? targetYaw.current
+    const dt = Math.min(delta, 0.05);
+
+    if (ready) {
+      intro.current = reduced
+        ? 1
+        : Math.min(1, intro.current + dt / 1.8);
+    }
+
+    const remaining = reduced
+      ? 0
+      : Math.pow(1 - intro.current, 3);
+
+    yaw.current = reduced
+      ? target.current
       : MathUtils.damp(
-          currentYaw.current,
-          targetYaw.current,
+          yaw.current,
+          target.current,
           12,
-          Math.min(delta, 0.05)
+          dt
         );
 
-    // Position never circles around the room.
-    camera.position.set(...EYE_POSITION);
+    camera.position.set(
+      EYE_POSITION[0],
+      EYE_POSITION[1],
+      EYE_POSITION[2] + 0.24 * remaining
+    );
 
-    // Only the direction changes.
-    // Pitch is fixed; roll remains zero.
     camera.rotation.set(
-      HEAD_PITCH,
-      currentYaw.current,
+      -0.12,
+      yaw.current,
       0,
       "YXZ"
     );

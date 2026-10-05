@@ -1,6 +1,12 @@
 import { useEffect, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { PMREMGenerator } from "three";
+
+import {
+  PMREMGenerator,
+  WebGLRenderTarget,
+  HalfFloatType,
+} from "three";
+
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
@@ -8,7 +14,7 @@ import { SSAOPass } from "three/addons/postprocessing/SSAOPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 
 export default function RoomFinish() {
-  const { gl, scene, camera, size } = useThree();
+  const { gl, scene, camera, size, viewport } = useThree();
   const pipeline = useRef(null);
 
   useEffect(() => {
@@ -25,7 +31,13 @@ export default function RoomFinish() {
     studio.dispose();
     generator.dispose();
 
-    const composer = new EffectComposer(gl);
+    const target = new WebGLRenderTarget(1, 1, {
+      type: HalfFloatType,
+      samples: Math.min(4, gl.capabilities.maxSamples),
+    });
+
+    const composer = new EffectComposer(gl, target);
+
     const ao = new SSAOPass(scene, camera, 1, 1, 16);
 
     ao.kernelRadius = 0.22;
@@ -56,11 +68,9 @@ export default function RoomFinish() {
   useEffect(() => {
     if (!pipeline.current) return;
 
-    pipeline.current.setPixelRatio(
-      Math.min(gl.getPixelRatio(), 1.5)
-    );
+    pipeline.current.setPixelRatio(gl.getPixelRatio());
     pipeline.current.setSize(size.width, size.height);
-  }, [gl, size.width, size.height]);
+  }, [gl, size.width, size.height, viewport.dpr]);
 
   useFrame((_, delta) => {
     if (pipeline.current) {

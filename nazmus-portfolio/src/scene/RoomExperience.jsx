@@ -1,9 +1,16 @@
-import { Component, Suspense, useRef } from "react";
+import {
+  Component,
+  Suspense,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
+
 import { Canvas } from "@react-three/fiber";
 
 import {
   ACESFilmicToneMapping,
-  PCFSoftShadowMap,
+  PCFShadowMap,
 } from "three";
 
 import CameraRig, {
@@ -11,8 +18,11 @@ import CameraRig, {
 } from "../scene/CameraRig";
 
 import RoomModel from "../scene/RoomModel";
-import RoomLabels, { RoomLabelOverlay } from "./RoomLabels";
 import RoomFinish from "../scene/RoomFinish";
+
+import RoomLabels, {
+  RoomLabelOverlay,
+} from "./RoomLabels";
 
 class SceneErrorBoundary extends Component {
   state = {
@@ -20,9 +30,7 @@ class SceneErrorBoundary extends Component {
   };
 
   static getDerivedStateFromError(error) {
-    return {
-      error,
-    };
+    return { error };
   }
 
   componentDidCatch(error) {
@@ -37,7 +45,8 @@ class SceneErrorBoundary extends Component {
             <p>The room could not load.</p>
 
             <p>
-              {this.state.error.message || String(this.state.error)}
+              {this.state.error.message ||
+                String(this.state.error)}
             </p>
           </div>
         </div>
@@ -51,15 +60,25 @@ class SceneErrorBoundary extends Component {
 export default function RoomExperience() {
   const labelElements = useRef([]);
 
+  const [ready, setReady] = useState(false);
+
+  const handleReady = useCallback(() => {
+    setReady(true);
+  }, []);
+
   return (
     <main
-      className="experience"
+      className={[
+        "experience",
+        "room-upgrade",
+        ready ? "room-ready" : "",
+      ].join(" ")}
       aria-label="Drag or swipe to look around the room"
     >
       <SceneErrorBoundary>
         <Canvas
           shadows
-          dpr={[1, 1.5]}
+          dpr={[1, 2]}
           camera={{
             position: EYE_POSITION,
             fov: 50,
@@ -72,8 +91,8 @@ export default function RoomExperience() {
           }}
           onCreated={({ gl }) => {
             gl.toneMapping = ACESFilmicToneMapping;
-            gl.toneMappingExposure = 1.05;
-            gl.shadowMap.type = PCFSoftShadowMap;
+            gl.toneMappingExposure = 0.98;
+            gl.shadowMap.type = PCFShadowMap;
           }}
           fallback={
             <div className="fallback">
@@ -83,57 +102,65 @@ export default function RoomExperience() {
         >
           <color
             attach="background"
-            args={["#eee6d8"]}
+            args={["#e4e4dc"]}
           />
 
-          <ambientLight intensity={0.22} />
+          <ambientLight intensity={0.12} />
 
           <hemisphereLight
-            args={["#fff1db", "#8b7760", 0.7]}
+            args={["#e5eef1", "#6e5947", 0.55]}
           />
 
           <directionalLight
-            position={[1.4, 3.8, 1.7]}
-            intensity={1.8}
-            color="#ffe5c1"
+            position={[-1.8, 3.65, -1.5]}
+            intensity={2.1}
+            color="#fff0d8"
             castShadow
             shadow-mapSize-width={1024}
             shadow-mapSize-height={1024}
-            shadow-camera-left={-6}
-            shadow-camera-right={6}
-            shadow-camera-top={6}
-            shadow-camera-bottom={-6}
+            shadow-camera-left={-5}
+            shadow-camera-right={5}
+            shadow-camera-top={5}
+            shadow-camera-bottom={-5}
             shadow-camera-near={0.1}
-            shadow-camera-far={18}
-            shadow-normalBias={0.02}
+            shadow-camera-far={16}
+            shadow-normalBias={0.025}
             shadow-bias={-0.0001}
           />
 
           <pointLight
-            position={[-0.3, 2.8, -2.45]}
+            position={[-0.3, 2.8, -2.4]}
             intensity={3}
             distance={9}
             decay={2}
-            color="#d4e5ec"
+            color="#d8e9f5"
           />
 
           <pointLight
             position={[2.8, 2.7, 0.6]}
-            intensity={2}
+            intensity={1.3}
             distance={7}
             decay={2}
-            color="#ffe4bf"
+            color="#ffdfb8"
           />
 
           <Suspense fallback={null}>
-            <RoomModel />
+            <RoomModel onReady={handleReady} />
+
             <RoomLabels elements={labelElements} />
           </Suspense>
 
-          <CameraRig />
+          <CameraRig ready={ready} />
           <RoomFinish />
         </Canvas>
+
         <RoomLabelOverlay elements={labelElements} />
+
+        {!ready && (
+          <div className="room-loading" role="status">
+            Loading room…
+          </div>
+        )}
       </SceneErrorBoundary>
     </main>
   );
