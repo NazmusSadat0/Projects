@@ -1,5 +1,4 @@
 import { useRef } from "react";
-import { createPortal } from "react-dom";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Vector3 } from "three";
 
@@ -21,15 +20,11 @@ const labels = [
   },
 ];
 
-export default function RoomLabels() {
-  const elements = useRef([]);
+export default function RoomLabels({ elements }) {
   const projected = useRef(new Vector3());
   const cameraSpace = useRef(new Vector3());
 
-  const { gl, camera, size } = useThree();
-
-  // Place HTML labels over the canvas, inside its container.
-  const container = gl.domElement.parentElement;
+  const { camera, size } = useThree();
 
   useFrame(() => {
     // CameraRig updates the camera before this callback.
@@ -72,9 +67,12 @@ export default function RoomLabels() {
     });
   }, 0.5);
 
-  if (!container) return null;
+  return null;
+}
 
-  return createPortal(
+// HTML must be rendered by React DOM, outside the Three Fiber canvas.
+export function RoomLabelOverlay({ elements }) {
+  return (
     <div className="room-label-layer" aria-hidden="true">
       {labels.map((label, index) => (
         <div
@@ -92,7 +90,6 @@ export default function RoomLabels() {
           <span className="room-label-stem" />
         </div>
       ))}
-    </div>,
-    container
+    </div>
   );
 }

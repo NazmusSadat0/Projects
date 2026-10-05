@@ -1,30 +1,45 @@
-import { Component } from "react";
+import { Component, Suspense, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
+
 import {
   ACESFilmicToneMapping,
   PCFSoftShadowMap,
 } from "three";
-import RoomLabels from "../scene/RoomLabels";
 
-import CameraRig, { EYE_POSITION } from "../scene/CameraRig";
-import Room from "../scene/Room";
-import RoomDetails from "../scene/RoomDetails";
-import InteriorShell from "../scene/InteriorShell";
+import CameraRig, {
+  EYE_POSITION,
+} from "../scene/CameraRig";
+
+import RoomModel from "../scene/RoomModel";
+import RoomLabels, { RoomLabelOverlay } from "./RoomLabels";
 import RoomFinish from "../scene/RoomFinish";
 
 class SceneErrorBoundary extends Component {
-  state = { error: false };
+  state = {
+    error: null,
+  };
 
-  static getDerivedStateFromError() {
-    return { error: true };
+  static getDerivedStateFromError(error) {
+    return {
+      error,
+    };
+  }
+
+  componentDidCatch(error) {
+    console.error("Unable to load the room:", error);
   }
 
   render() {
     if (this.state.error) {
       return (
         <div className="fallback" role="alert">
-          The room could not start. Please reload and check the
-          browser console.
+          <div>
+            <p>The room could not load.</p>
+
+            <p>
+              {this.state.error.message || String(this.state.error)}
+            </p>
+          </div>
         </div>
       );
     }
@@ -34,6 +49,8 @@ class SceneErrorBoundary extends Component {
 }
 
 export default function RoomExperience() {
+  const labelElements = useRef([]);
+
   return (
     <main
       className="experience"
@@ -64,7 +81,10 @@ export default function RoomExperience() {
             </div>
           }
         >
-          <color attach="background" args={["#eee6d8"]} />
+          <color
+            attach="background"
+            args={["#eee6d8"]}
+          />
 
           <ambientLight intensity={0.22} />
 
@@ -87,8 +107,6 @@ export default function RoomExperience() {
             shadow-camera-far={18}
             shadow-normalBias={0.02}
             shadow-bias={-0.0001}
-            shadow-radius={4}
-            shadow-blurSamples={8}
           />
 
           <pointLight
@@ -107,13 +125,15 @@ export default function RoomExperience() {
             color="#ffe4bf"
           />
 
-          <Room />
-          <RoomDetails />
-          <InteriorShell />
+          <Suspense fallback={null}>
+            <RoomModel />
+            <RoomLabels elements={labelElements} />
+          </Suspense>
+
           <CameraRig />
-          <RoomLabels />
           <RoomFinish />
         </Canvas>
+        <RoomLabelOverlay elements={labelElements} />
       </SceneErrorBoundary>
     </main>
   );

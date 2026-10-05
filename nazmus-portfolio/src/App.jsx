@@ -1,4 +1,4 @@
-import RoomExperience from "./components/RoomExperience";
+import RoomExperience from "./scene/RoomExperience.jsx";
 
 export default function App() {
   return <RoomExperience />;
