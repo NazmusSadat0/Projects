@@ -8,10 +8,7 @@ body,
   width: 100%;
   height: 100%;
   margin: 0;
-}
-
-html {
-  background: #eee4d3;
+  background: #13271f;
 }
 
 body {
@@ -23,29 +20,19 @@ body {
 .experience {
   position: fixed;
   inset: 0;
-
   width: 100%;
   height: 100%;
   height: 100dvh;
-
   overflow: hidden;
-  background: #eee4d3;
+  background: #e4e4dc;
 }
 
 .experience canvas {
   display: block;
-
   width: 100%;
   height: 100%;
-
   cursor: grab;
-
-  /*
-   * One-finger gestures belong to the 3D scene.
-   * Browser keyboard/menu zoom remains available.
-   */
   touch-action: none;
-
   user-select: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
@@ -58,12 +45,9 @@ body {
 .fallback {
   display: grid;
   place-content: center;
-
   width: 100%;
   height: 100%;
-
   padding: 28px;
-
   text-align: center;
   line-height: 1.6;
 }
@@ -73,8 +57,6 @@ body {
   inset: 0;
   z-index: 5;
   overflow: hidden;
-
-  /* Swiping passes through the labels to the room. */
   pointer-events: none;
   user-select: none;
   -webkit-user-select: none;
@@ -84,132 +66,9 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  visibility: hidden;
-  will-change: transform;
-}
-
-.room-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-
-  padding: 11px 17px;
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  border-radius: 999px;
-
-  background: rgba(255, 249, 239, 0.92);
-  color: #493b2d;
-
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-
-  box-shadow:
-    0 5px 20px rgba(58, 39, 20, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
-
-  animation: room-label-float 3.5s ease-in-out infinite;
-}
-
-.room-label-dot {
-  width: 6px;
-  height: 6px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background: #b96c3d;
-}
-
-.room-label-stem {
-  width: 1px;
-  height: 22px;
-  background: linear-gradient(
-    rgba(255, 249, 239, 0.9),
-    rgba(255, 249, 239, 0.1)
-  );
-}
-
-.room-label-anchor:nth-child(2) .room-label {
-  animation-delay: -1.2s;
-}
-
-.room-label-anchor:nth-child(3) .room-label {
-  animation-delay: -2.4s;
-}
-
-@keyframes room-label-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-4px);
-  }
-}
-
-@media (max-width: 600px) {
-  .room-label {
-    padding: 10px 14px;
-    font-size: 12px;
-    gap: 7px;
-  }
-
-  .room-label-stem {
-    height: 17px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .room-label {
-    animation: none;
-  }
-}
-
-.room-upgrade {
-  background: #e4e4dc;
-}
-
-/* Fade the canvas in once the model is prepared. 
-Delete these 3 things later 
-.room-upgrade > div:first-child {
-  opacity: 0;
-  transition: opacity 800ms ease;
-}
-
-.room-upgrade.room-ready > div:first-child {
-  opacity: 1;
-}
-
-.room-upgrade:has(.fallback) > div:first-child {
-  opacity: 1;
-}
-*/
-.room-label-layer {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  overflow: hidden;
-
-  pointer-events: none;
-  user-select: none;
-}
-
-.room-label-anchor {
-  position: absolute;
-  top: 0;
-  left: 0;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
   visibility: hidden;
   will-change: transform;
 }
@@ -224,88 +83,17 @@ Delete these 3 things later
   opacity: 1;
 }
 
-.room-upgrade .room-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-
-  padding: 11px 17px;
-  border: 1px solid rgba(242, 234, 218, 0.3);
-  border-radius: 999px;
-
-  background: rgba(33, 43, 40, 0.9);
-  color: #f5eddf;
-
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-
-  box-shadow: 0 6px 22px rgba(24, 30, 27, 0.15);
-
-  animation: room-label-float 4s ease-in-out infinite;
-}
-
-.room-upgrade .room-label-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #d49a68;
-}
-
-.room-upgrade .room-label-stem {
-  width: 1px;
-  height: 22px;
-
-  background: linear-gradient(
-    #718276,
-    transparent
-  );
-}
-
-.room-upgrade .room-label-anchor:nth-child(2) .room-label {
-  animation-delay: -1.3s;
-}
-
-.room-upgrade .room-label-anchor:nth-child(3) .room-label {
-  animation-delay: -2.6s;
-}
-
 .room-loading {
   position: absolute;
   inset: 0;
-
   display: grid;
   place-items: center;
-
   pointer-events: none;
   color: #384a41;
   font-size: 14px;
 }
 
-@keyframes room-label-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-4px);
-  }
-}
-
-@media (max-width: 600px) {
-  .room-upgrade .room-label {
-    padding: 10px 13px;
-    font-size: 12px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .room-upgrade .room-label {
-    animation: none;
-  }
-
   .room-upgrade > div:first-child,
   .room-upgrade .room-label-layer {
     transition: none;

@@ -382,20 +382,6 @@
   }
 }
 
-html,
-body,
-#root {
-  background: #13271f;
-}
-
-.experience .room-preloader {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  visibility: visible;
-  opacity: 1;
-}
-
 .experience .room-preloader.room-preloader--leaving {
   opacity: 0;
   pointer-events: none;

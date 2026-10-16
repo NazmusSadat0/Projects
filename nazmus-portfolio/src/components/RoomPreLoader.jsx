@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "../styles/RoomPreloader.css";
+import "../styles/RoomPreLoader.css";
 
 export default function RoomPreloader({ ready }) {
   const [visible, setVisible] = useState(true);
