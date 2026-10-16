@@ -28,6 +28,21 @@ function sectionFor(object) {
   return null;
 }
 
+function isScreenMesh(object) {
+  let current = object;
+  while (current) {
+    if (
+      ["ProjectsScreen", "ContactScreen"].includes(
+        current.name
+      )
+    ) {
+      return true;
+    }
+    current = current.parent;
+  }
+  return false;
+}
+
 export default function RoomInteractions({
   children,
   ready,
@@ -48,7 +63,7 @@ export default function RoomInteractions({
     const items = [];
 
     group.current.traverse((object) => {
-      if (!object.isMesh) return;
+      if (!object.isMesh || isScreenMesh(object)) return;
 
       const section = sectionFor(object);
       if (!section) return;
@@ -132,7 +147,7 @@ export default function RoomInteractions({
   useFrame((_, delta) => {
     surfaces.current.forEach((item) => {
       const target =
-        hovered === item.section ? 0.7 : 1;
+        hovered === item.section ? 1.16 : 1;
 
       item.shade = reduced
         ? target
@@ -153,14 +168,13 @@ export default function RoomInteractions({
     <group
       ref={group}
       onPointerMove={(event) => {
-        // Prevent selecting objects behind the visible surface.
         event.stopPropagation();
 
         onHover(
           event.buttons ? null : sectionFor(event.object)
         );
       }}
-      onPointerOut={() => onHover(null)}
+      onPointerLeave={() => onHover(null)}
       onClick={(event) => {
         event.stopPropagation();
 

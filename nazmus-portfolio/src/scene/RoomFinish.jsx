@@ -31,23 +31,32 @@ export default function RoomFinish() {
     studio.dispose();
     generator.dispose();
 
-    const target = new WebGLRenderTarget(1, 1, {
+    const width = Math.max(size.width, 1);
+    const height = Math.max(size.height, 1);
+    const isMobile = width < 700;
+
+    const target = new WebGLRenderTarget(width, height, {
       type: HalfFloatType,
       samples: Math.min(4, gl.capabilities.maxSamples),
     });
 
     const composer = new EffectComposer(gl, target);
+    composer.setPixelRatio(Math.min(gl.getPixelRatio(), 1.25));
+    composer.setSize(width, height);
 
-    const ao = new SSAOPass(scene, camera, 1, 1, 8);
+    const renderPass = new RenderPass(scene, camera);
+    composer.addPass(renderPass);
 
-    ao.kernelRadius = 0.14;
-    ao.minDistance = 0.001;
-    ao.maxDistance = 0.05;
+    let ao = null;
+    if (!isMobile) {
+      ao = new SSAOPass(scene, camera, width, height, 8);
+      ao.kernelRadius = 0.14;
+      ao.minDistance = 0.001;
+      ao.maxDistance = 0.05;
+      composer.addPass(ao);
+    }
 
     const output = new OutputPass();
-
-    composer.addPass(new RenderPass(scene, camera));
-    composer.addPass(ao);
     composer.addPass(output);
 
     pipeline.current = composer;
@@ -58,9 +67,10 @@ export default function RoomFinish() {
       scene.environment = previousEnvironment;
       scene.environmentIntensity = previousIntensity;
 
-      ao.dispose();
+      ao?.dispose();
       output.dispose();
       composer.dispose();
+      target.dispose();
       environment.dispose();
     };
   }, [gl, scene, camera]);
@@ -68,7 +78,9 @@ export default function RoomFinish() {
   useEffect(() => {
     if (!pipeline.current) return;
 
-    pipeline.current.setPixelRatio(Math.min(gl.getPixelRatio(), 1.25));
+    pipeline.current.setPixelRatio(
+      Math.min(gl.getPixelRatio(), 1.25)
+    );
     pipeline.current.setSize(size.width, size.height);
   }, [gl, size.width, size.height, viewport.dpr]);
 

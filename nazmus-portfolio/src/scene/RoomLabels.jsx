@@ -49,28 +49,29 @@ export default function RoomLabels({ elements }) {
       const x = (point.x * 0.5 + 0.5) * size.width;
       const y = (-point.y * 0.5 + 0.5) * size.height;
 
-      const halfWidth = element.offsetWidth / 2;
+      const padX = 48;
+      const padY = 48;
 
       const visible =
         cameraSpace.current.z < 0 &&
         point.z >= -1 &&
         point.z <= 1 &&
-        x > 0 && x < size.width &&
-        y > 0 && y < size.height;
-
-      // Keep readable cards inside the viewport as their objects approach an edge.
-      const cardX = Math.max(halfWidth + 12, Math.min(x, size.width - halfWidth - 12));
-      const cardY = Math.max(element.offsetHeight + 12, Math.min(y, size.height - 24));
+        x > padX &&
+        x < size.width - padX &&
+        y > padY &&
+        y < size.height - 20;
 
       element.style.visibility = visible
         ? "visible"
         : "hidden";
 
-      element.style.transform =
-        `translate3d(${cardX}px, ${cardY}px, 0) ` +
-        "translate(-50%, -100%)";
+      if (visible) {
+        element.style.transform =
+          `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) ` +
+          "translate(-50%, -100%)";
+      }
     });
-  }, 0.5);
+  });
 
   return null;
 }
@@ -90,7 +91,7 @@ export function RoomLabelOverlay({
         hidden ? "markers-hidden" : "",
       ].join(" ")}
       aria-label="Explore the room"
-      inert={hidden}
+      inert={hidden ? true : undefined}
     >
       {labels.map((label, index) => (
         <div
@@ -106,7 +107,10 @@ export function RoomLabelOverlay({
           <button
             type="button"
             className="object-marker-title"
-            onClick={() => { onHover(null); onOpen(label.id); }}
+            onClick={() => {
+              onHover(null);
+              onOpen(label.id);
+            }}
             onPointerEnter={() => onHover(label.id)}
             onPointerLeave={() => onHover(null)}
             onFocus={() => onHover(label.id)}
@@ -118,7 +122,12 @@ export function RoomLabelOverlay({
             </span>
 
             <span>{label.text}</span>
-            <span className="object-marker-arrow" aria-hidden="true">↗</span>
+            <span
+              className="object-marker-arrow"
+              aria-hidden="true"
+            >
+              ↗
+            </span>
           </button>
 
           <span className="object-marker-line" />
