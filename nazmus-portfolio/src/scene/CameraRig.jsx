@@ -12,16 +12,22 @@ import useReducedMotion from "../hooks/useReducedMotion";
 export const EYE_POSITION = [0, 2.15, 2.55];
 
 const LIMIT = MathUtils.degToRad(89);
+const KEY_SPEED = MathUtils.degToRad(58); // Smooth rotation speed per second
 
 const clamp = (value) =>
   MathUtils.clamp(value, -LIMIT, LIMIT);
 
-export default function CameraRig({ ready = true }) {
+export default function CameraRig({
+  ready = true,
+  section = null,
+  onInteract,
+}) {
   const { camera, gl, size } = useThree();
 
   const target = useRef(0);
   const yaw = useRef(0);
   const intro = useRef(0);
+  const keys = useRef({ left: false, right: false });
 
   const reduced = useReducedMotion();
 
@@ -45,6 +51,7 @@ export default function CameraRig({ ready = true }) {
     camera.updateProjectionMatrix();
   }, [camera, size.width, size.height]);
 
+  // Pointer drag rotation
   useEffect(() => {
     const canvas = gl.domElement;
 
@@ -68,6 +75,10 @@ export default function CameraRig({ ready = true }) {
     function move(event) {
       if (!drag || event.pointerId !== drag.id) {
         return;
+      }
+
+      if (Math.abs(event.clientX - drag.x) > 8) {
+        onInteract?.();
       }
 
       const sensitivity =
@@ -104,7 +115,6 @@ export default function CameraRig({ ready = true }) {
     canvas.addEventListener("pointerup", end);
     canvas.addEventListener("pointercancel", end);
     canvas.addEventListener("lostpointercapture", end);
-
     window.addEventListener("blur", end);
 
     return () => {
@@ -112,17 +122,49 @@ export default function CameraRig({ ready = true }) {
       canvas.removeEventListener("pointermove", move);
       canvas.removeEventListener("pointerup", end);
       canvas.removeEventListener("pointercancel", end);
-
-      canvas.removeEventListener(
-        "lostpointercapture",
-        end
-      );
-
+      canvas.removeEventListener("lostpointercapture", end);
       window.removeEventListener("blur", end);
-
       end();
     };
-  }, [gl]);
+  }, [gl, onInteract]);
+
+  // Keyboard ArrowLeft / ArrowRight / A / D controls
+  useEffect(() => {
+    function handleKeyDown(event) {
+      if (section) return;
+
+      if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") {
+        keys.current.left = true;
+        onInteract?.();
+      } else if (event.key === "ArrowRight" || event.key === "d" || event.key === "D") {
+        keys.current.right = true;
+        onInteract?.();
+      }
+    }
+
+    function handleKeyUp(event) {
+      if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") {
+        keys.current.left = false;
+      } else if (event.key === "ArrowRight" || event.key === "d" || event.key === "D") {
+        keys.current.right = false;
+      }
+    }
+
+    function resetKeys() {
+      keys.current.left = false;
+      keys.current.right = false;
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("blur", resetKeys);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+      window.removeEventListener("blur", resetKeys);
+    };
+  }, [section, onInteract]);
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
@@ -131,6 +173,17 @@ export default function CameraRig({ ready = true }) {
       intro.current = reduced
         ? 1
         : Math.min(1, intro.current + dt / 1.8);
+    }
+
+    // Apply smooth arrow key rotation
+    const keyDirection =
+      (keys.current.left ? 1 : 0) -
+      (keys.current.right ? 1 : 0);
+
+    if (keyDirection !== 0) {
+      target.current = clamp(
+        target.current + keyDirection * KEY_SPEED * dt
+      );
     }
 
     const remaining = reduced
