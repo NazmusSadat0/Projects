@@ -436,3 +436,82 @@ body {
     transition: none;
   }
 }
+
+/* Onboarding visual guide */
+.room-guide {
+  position: fixed;
+  left: 50%;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  z-index: 10;
+  transform: translate(-50%, 12px);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 10px 18px;
+  border: 1px solid #f5eddf40;
+  border-radius: 999px;
+  background: #1d2f27e6;
+  color: #f5eddf;
+  box-shadow: 0 8px 28px #0d1b164d;
+
+  font-size: 13px;
+  white-space: nowrap;
+  pointer-events: none;
+
+  opacity: 0;
+  transition:
+    opacity 450ms ease,
+    transform 450ms ease;
+}
+
+.room-guide--visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.room-guide-icon {
+  width: 44px;
+  height: 20px;
+  color: #e0b68a;
+  flex-shrink: 0;
+}
+
+.room-guide-dot {
+  animation: guide-swipe 2.2s ease-in-out infinite;
+}
+
+.room-guide-text kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  margin: 0 1px;
+  border: 1px solid #f5eddf44;
+  border-radius: 5px;
+  background: #2b4238;
+  color: #e0b68a;
+  font: 11px ui-monospace, monospace;
+}
+
+@keyframes guide-swipe {
+  0%, 100% {
+    transform: translateX(-8px);
+  }
+  50% {
+    transform: translateX(8px);
+  }
+}
+
+@media (max-width: 600px) {
+  .room-guide {
+    font-size: 11px;
+    padding: 9px 14px;
+    max-width: calc(100vw - 32px);
+    white-space: normal;
+    text-align: center;
+  }
+
+  .room-guide-text kbd {
+    display: none;
+  }
+}

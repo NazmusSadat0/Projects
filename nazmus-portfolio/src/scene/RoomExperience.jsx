@@ -87,6 +87,11 @@ export default function RoomExperience() {
   const [ready, setReady] = useState(false);
   const [hovered, setHovered] = useState(null);
   const [section, setSection] = useState(null);
+  const [interacted, setInteracted] = useState(false);
+
+  const handleInteract = useCallback(() => {
+    setInteracted(true);
+  }, []);
 
   const handleReady = useCallback(() => {
     setReady(true);
@@ -188,7 +193,11 @@ export default function RoomExperience() {
             <RoomLabels elements={labelElements} />
           </Suspense>
 
-          <CameraRig ready={ready} />
+          <CameraRig
+    ready={ready}
+    section={section}
+    onInteract={handleInteract}
+  />
           <RoomFinish />
         </Canvas>
 
@@ -199,6 +208,37 @@ export default function RoomExperience() {
           onOpen={setSection}
           onHover={setHovered}
         />
+
+        <div
+          className={[
+            "room-guide",
+            ready && !interacted && !section ? "room-guide--visible" : "",
+          ].join(" ")}
+          aria-hidden="true"
+        >
+          <div className="room-guide-icon">
+            <svg viewBox="0 0 64 28" fill="none">
+              <path
+                d="M14 14H4M4 14L9 9M4 14L9 19M50 14H60M60 14L55 9M60 14L55 19"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle
+                className="room-guide-dot"
+                cx="32"
+                cy="14"
+                r="5"
+                fill="currentColor"
+              />
+            </svg>
+          </div>
+
+          <span className="room-guide-text">
+            Drag or press <kbd>←</kbd> <kbd>→</kbd> to look around · Click markers to explore
+          </span>
+        </div>
 
         {section && (
           <RoomSections
