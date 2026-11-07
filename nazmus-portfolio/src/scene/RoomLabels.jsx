@@ -24,7 +24,7 @@ const labels = [
     id: "about",
     text: "About Me",
     badge: "Story",
-    position: [-3.25, 3.18, -0.65],
+    position: [-3.25, 2.9, -0.65],
     icon: (
       <svg viewBox="0 0 16 16" fill="none" className="marker-icon-svg">
         <path
