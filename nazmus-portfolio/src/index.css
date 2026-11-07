@@ -102,93 +102,223 @@ body {
 
 /* Readable, stationary section cards anchored to the room. */
 
+/* Unique Cyber-Organic 3D Object Markers */
+
 .room-upgrade .object-markers {
   pointer-events: none;
 }
 
 .room-upgrade .object-markers.markers-hidden {
   opacity: 0;
-  transition-delay: 0s;
+  transition: opacity 300ms ease;
 }
 
-.object-marker-title {
-  display: flex;
+.unique-marker-card {
+  display: inline-flex;
   align-items: center;
-  gap: 9px;
-  padding: 12px 15px;
-  border: 1px solid #f5eddf55;
-  border-radius: 12px;
-  background: #263b31;
-  box-shadow: 0 4px 16px #15281f33;
+  gap: 12px;
+  padding: 8px 12px 8px 10px;
+
+  border: 1px solid rgba(245, 237, 223, 0.28);
+  border-radius: 999px;
+  background: rgba(18, 29, 24, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  color: #fff9ed;
   cursor: pointer;
   pointer-events: auto;
-  font-family: inherit;
   white-space: nowrap;
 
-  color: #fff7e9;
-  font-size: 14px;
-  font-weight: 650;
-  letter-spacing: 0.01em;
+  box-shadow:
+    0 8px 24px rgba(6, 15, 11, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 
   transition:
-    background 150ms ease,
-    border-color 150ms ease;
+    transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    background 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease;
 }
 
-.object-marker-number {
-  color: #e0b68a;
-  font: 11px ui-monospace, monospace;
-  letter-spacing: 0.03em;
-}
-
-.object-marker-line {
-  width: 1px;
-  height: 18px;
-  background: #f5eddfcc;
-}
-
-.object-marker-point {
-  width: 8px;
-  height: 8px;
+.marker-icon-box {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-
-  background: #e0b68a;
-  box-shadow: 0 0 0 3px #263b3199;
-
-  transition:
-    box-shadow 250ms ease,
-    background 250ms ease;
+  background: rgba(224, 182, 138, 0.14);
+  border: 1px solid rgba(224, 182, 138, 0.35);
+  color: #e0b68a;
+  transition: background 200ms ease, transform 200ms ease;
 }
 
-.marker-active .object-marker-title {
-  background: #3b5143;
+.marker-icon-svg {
+  width: 15px;
+  height: 15px;
+}
+
+.marker-text-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.15;
+}
+
+.marker-title {
+  font-size: 13.5px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+
+.marker-badge {
+  font-size: 9px;
+  font-family: ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #c9ad88;
+}
+
+.marker-arrow-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e8d7c2;
+  font-size: 11px;
+  font-weight: 500;
+  transition: all 200ms ease;
+}
+
+.marker-arrow {
+  display: inline-block;
+  transition: transform 200ms ease;
+}
+
+/* Hover and Active Focus States */
+.unique-marker-card:hover,
+.marker-active .unique-marker-card {
+  transform: translateY(-3px) scale(1.04);
+  background: rgba(30, 48, 40, 0.92);
+  border-color: #e0b68a;
+  box-shadow:
+    0 14px 34px rgba(6, 15, 11, 0.6),
+    0 0 20px rgba(224, 182, 138, 0.28);
+}
+
+.unique-marker-card:hover .marker-icon-box,
+.marker-active .marker-icon-box {
+  background: #e0b68a;
+  color: #14221b;
+  transform: rotate(-6deg);
+}
+
+.unique-marker-card:hover .marker-arrow-chip,
+.marker-active .marker-arrow-chip {
+  background: #e0b68a;
+  color: #14221b;
   border-color: #e0b68a;
 }
 
-.object-marker-title:focus-visible {
-  outline: 3px solid #e0b68a;
-  outline-offset: 3px;
+.unique-marker-card:hover .marker-arrow,
+.marker-active .marker-arrow {
+  transform: translateX(3px);
 }
 
-.object-marker-arrow {
-  margin-left: 4px;
-  color: #e0b68a;
-  font-size: 17px;
+.unique-marker-card:focus-visible {
+  outline: 2px solid #e0b68a;
+  outline-offset: 4px;
 }
 
-.marker-active .object-marker-point {
-  background: #bc743b;
-  box-shadow:
-    0 0 0 6px #d89d5138,
-    0 0 18px #d89d5140;
+/* Sonar Beam Tether & Target Ripples */
+.sonar-tether {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
 }
 
-.experience.has-room-target canvas {
-  cursor: pointer;
+.sonar-stem {
+  width: 1.5px;
+  height: 22px;
+  background: linear-gradient(
+    to bottom,
+    rgba(224, 182, 138, 0.75),
+    rgba(224, 182, 138, 0.1)
+  );
 }
 
-.experience.has-room-target canvas.is-dragging {
-  cursor: grabbing;
+.sonar-target {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  display: grid;
+  place-items: center;
+}
+
+.sonar-core {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #e0b68a;
+  box-shadow: 0 0 8px #e0b68a;
+  z-index: 2;
+  transition: transform 200ms ease;
+}
+
+.sonar-ripple {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid #e0b68a;
+  opacity: 0;
+  animation: sonar-pulse 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+}
+
+.sonar-ripple.ripple-2 {
+  animation-delay: 1.2s;
+}
+
+.marker-active .sonar-core {
+  transform: scale(1.4);
+  background: #ffffff;
+  box-shadow: 0 0 12px #ffffff;
+}
+
+@keyframes sonar-pulse {
+  0% {
+    transform: scale(0.3);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 650px) {
+  .unique-marker-card {
+    padding: 6px 10px 6px 8px;
+    gap: 8px;
+  }
+  .marker-icon-box {
+    width: 26px;
+    height: 26px;
+  }
+  .marker-title {
+    font-size: 12px;
+  }
+  .marker-badge {
+    display: none;
+  }
+  .marker-arrow-chip {
+    padding: 3px 7px;
+    font-size: 10px;
+  }
 }
 
 /* Section panels */
