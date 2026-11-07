@@ -12,7 +12,7 @@ import useReducedMotion from "../hooks/useReducedMotion";
 export const EYE_POSITION = [0, 2.15, 2.55];
 
 const LIMIT = MathUtils.degToRad(89);
-const KEY_SPEED = MathUtils.degToRad(58); // Smooth rotation speed per second
+const KEY_SPEED = MathUtils.degToRad(58);
 
 const clamp = (value) =>
   MathUtils.clamp(value, -LIMIT, LIMIT);
@@ -27,6 +27,8 @@ export default function CameraRig({
   const target = useRef(0);
   const yaw = useRef(0);
   const intro = useRef(0);
+  const teaserProgress = useRef(0);
+  const hasInteracted = useRef(false);
   const keys = useRef({ left: false, right: false });
 
   const reduced = useReducedMotion();
@@ -54,13 +56,10 @@ export default function CameraRig({
   // Pointer drag rotation
   useEffect(() => {
     const canvas = gl.domElement;
-
     let drag = null;
 
     function down(event) {
-      if (!event.isPrimary || event.button !== 0) {
-        return;
-      }
+      if (!event.isPrimary || event.button !== 0) return;
 
       drag = {
         id: event.pointerId,
@@ -73,11 +72,10 @@ export default function CameraRig({
     }
 
     function move(event) {
-      if (!drag || event.pointerId !== drag.id) {
-        return;
-      }
+      if (!drag || event.pointerId !== drag.id) return;
 
-      if (Math.abs(event.clientX - drag.x) > 8) {
+      if (Math.abs(event.clientX - drag.x) > 6) {
+        hasInteracted.current = true;
         onInteract?.();
       }
 
@@ -86,28 +84,18 @@ export default function CameraRig({
         Math.max(canvas.clientWidth, 320);
 
       target.current = clamp(
-        drag.yaw +
-          (event.clientX - drag.x) * sensitivity
+        drag.yaw + (event.clientX - drag.x) * sensitivity
       );
     }
 
     function end(event) {
-      if (
-        !drag ||
-        (event?.pointerId !== undefined &&
-          event.pointerId !== drag.id)
-      ) {
+      if (!drag || (event?.pointerId !== undefined && event.pointerId !== drag.id)) {
         return;
       }
-
       const id = drag.id;
       drag = null;
-
       canvas.classList.remove("is-dragging");
-
-      if (canvas.hasPointerCapture(id)) {
-        canvas.releasePointerCapture(id);
-      }
+      if (canvas.hasPointerCapture(id)) canvas.releasePointerCapture(id);
     }
 
     canvas.addEventListener("pointerdown", down);
@@ -128,16 +116,17 @@ export default function CameraRig({
     };
   }, [gl, onInteract]);
 
-  // Keyboard ArrowLeft / ArrowRight / A / D controls
+  // Keyboard rotation (Arrow keys and A / D)
   useEffect(() => {
     function handleKeyDown(event) {
       if (section) return;
-
       if (event.key === "ArrowLeft" || event.key === "a" || event.key === "A") {
         keys.current.left = true;
+        hasInteracted.current = true;
         onInteract?.();
       } else if (event.key === "ArrowRight" || event.key === "d" || event.key === "D") {
         keys.current.right = true;
+        hasInteracted.current = true;
         onInteract?.();
       }
     }
@@ -150,19 +139,12 @@ export default function CameraRig({
       }
     }
 
-    function resetKeys() {
-      keys.current.left = false;
-      keys.current.right = false;
-    }
-
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
-    window.addEventListener("blur", resetKeys);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
-      window.removeEventListener("blur", resetKeys);
     };
   }, [section, onInteract]);
 
@@ -172,13 +154,22 @@ export default function CameraRig({
     if (ready) {
       intro.current = reduced
         ? 1
-        : Math.min(1, intro.current + dt / 1.8);
+        : Math.min(1, intro.current + dt / 1.5);
     }
 
-    // Apply smooth arrow key rotation
+    // Teaser pan: gently nudges the room left and back once on entry
+    let teaserOffset = 0;
+    if (ready && !hasInteracted.current && !reduced) {
+      teaserProgress.current = Math.min(
+        1,
+        teaserProgress.current + dt / 1.4
+      );
+      teaserOffset =
+        Math.sin(teaserProgress.current * Math.PI) * 0.12;
+    }
+
     const keyDirection =
-      (keys.current.left ? 1 : 0) -
-      (keys.current.right ? 1 : 0);
+      (keys.current.left ? 1 : 0) - (keys.current.right ? 1 : 0);
 
     if (keyDirection !== 0) {
       target.current = clamp(
@@ -186,18 +177,11 @@ export default function CameraRig({
       );
     }
 
-    const remaining = reduced
-      ? 0
-      : Math.pow(1 - intro.current, 3);
+    const remaining = reduced ? 0 : Math.pow(1 - intro.current, 3);
 
     yaw.current = reduced
       ? target.current
-      : MathUtils.damp(
-          yaw.current,
-          target.current,
-          12,
-          dt
-        );
+      : MathUtils.damp(yaw.current, target.current + teaserOffset, 10, dt);
 
     camera.position.set(
       EYE_POSITION[0],
@@ -205,12 +189,7 @@ export default function CameraRig({
       EYE_POSITION[2] + 0.24 * remaining
     );
 
-    camera.rotation.set(
-      -0.12,
-      yaw.current,
-      0,
-      "YXZ"
-    );
+    camera.rotation.set(-0.12, yaw.current, 0, "YXZ");
   });
 
   return null;

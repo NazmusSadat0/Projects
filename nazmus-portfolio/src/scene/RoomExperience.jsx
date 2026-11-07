@@ -93,6 +93,22 @@ export default function RoomExperience() {
     setInteracted(true);
   }, []);
 
+  const nudgeLeft = () => {
+    handleInteract();
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowLeft" }));
+    setTimeout(() => {
+      window.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowLeft" }));
+    }, 180);
+  };
+
+  const nudgeRight = () => {
+    handleInteract();
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight" }));
+    setTimeout(() => {
+      window.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowRight" }));
+    }, 180);
+  };
+
   const handleReady = useCallback(() => {
     setReady(true);
   }, []);
@@ -194,10 +210,10 @@ export default function RoomExperience() {
           </Suspense>
 
           <CameraRig
-    ready={ready}
-    section={section}
-    onInteract={handleInteract}
-  />
+            ready={ready}
+            section={section}
+            onInteract={handleInteract}
+          />
           <RoomFinish />
         </Canvas>
 
@@ -208,6 +224,58 @@ export default function RoomExperience() {
           onOpen={setSection}
           onHover={setHovered}
         />
+
+        {/* Visible screen-edge navigation buttons */}
+        <button
+          type="button"
+          className="room-nav-arrow room-nav-arrow--left"
+          onClick={nudgeLeft}
+          aria-label="Rotate view left"
+        >
+          ‹
+        </button>
+
+        <button
+          type="button"
+          className="room-nav-arrow room-nav-arrow--right"
+          onClick={nudgeRight}
+          aria-label="Rotate view right"
+        >
+          ›
+        </button>
+
+        {/* High-visibility onboarding HUD */}
+        <aside
+          className={[
+            "room-guide",
+            ready && !interacted && !section ? "room-guide--visible" : "",
+          ].join(" ")}
+          aria-label="Interactive guide"
+        >
+          <div className="room-guide-glow" />
+
+          <div className="room-guide-content">
+            <div className="room-guide-drag-icon" aria-hidden="true">
+              <svg viewBox="0 0 44 24" fill="none">
+                <path
+                  d="M10 12H2M2 12L6 8M2 12L6 16M34 12H42M42 12L38 8M42 12L38 16"
+                  stroke="#e2b17b"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <circle cx="22" cy="12" r="4.5" fill="#e2b17b" />
+              </svg>
+            </div>
+
+            <div className="room-guide-copy">
+              <strong>Drag or use keys to look around</strong>
+              <span>
+                Press <kbd>←</kbd> <kbd>→</kbd> or click 3D markers to explore
+              </span>
+            </div>
+          </div>
+        </aside>
 
         <div
           className={[
