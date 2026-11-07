@@ -172,12 +172,6 @@ export default function RoomPreloader({ ready }) {
           <span />
         </div>
       </div>
-
-      <p className="preloader-hint">
-        Drag to look around
-        <span>·</span>
-        Tap objects to explore
-      </p>
     </div>
   );
 }

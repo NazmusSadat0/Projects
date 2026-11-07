@@ -125,7 +125,7 @@ export default function RoomExperience() {
         ready ? "room-ready" : "",
         hovered ? "has-room-target" : "",
       ].join(" ")}
-      aria-label="Drag or swipe to look around the room"
+      aria-label="Portfolio room"
     >
       <SceneErrorBoundary>
         <Canvas
@@ -244,38 +244,7 @@ export default function RoomExperience() {
           ›
         </button>
 
-        {/* High-visibility onboarding HUD */}
-        <aside
-          className={[
-            "room-guide",
-            ready && !interacted && !section ? "room-guide--visible" : "",
-          ].join(" ")}
-          aria-label="Interactive guide"
-        >
-          <div className="room-guide-glow" />
-
-          <div className="room-guide-content">
-            <div className="room-guide-drag-icon" aria-hidden="true">
-              <svg viewBox="0 0 44 24" fill="none">
-                <path
-                  d="M10 12H2M2 12L6 8M2 12L6 16M34 12H42M42 12L38 8M42 12L38 16"
-                  stroke="#e2b17b"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <circle cx="22" cy="12" r="4.5" fill="#e2b17b" />
-              </svg>
-            </div>
-
-            <div className="room-guide-copy">
-              <strong>Drag or use keys to look around</strong>
-              <span>
-                Press <kbd>←</kbd> <kbd>→</kbd> or click 3D markers to explore
-              </span>
-            </div>
-          </div>
-        </aside>
+            
 
         <div
           className={[
