@@ -6,18 +6,57 @@ import useReducedMotion from "../hooks/useReducedMotion";
 
 function sectionFor(object) {
   while (object) {
+    const name = object.name || "";
+    const lower = name.toLowerCase();
+
+    // Skip generic architecture and windows
     if (
-      ["Projects", "ProjectsScreen"].includes(object.name)
+      name.startsWith("Architecture_") ||
+      lower.includes("floor") ||
+      lower.includes("ceiling") ||
+      lower.includes("window")
+    ) {
+      object = object.parent;
+      continue;
+    }
+
+    if (
+      ["Projects", "ProjectsScreen"].includes(name) ||
+      lower.includes("project") ||
+      lower.includes("monitor")
     ) {
       return "projects";
     }
 
-    if (object.name === "AboutMe") {
+    // Matches the wall portrait, picture frame, artwork, and bookshelf
+    if (
+      [
+        "AboutMe",
+        "About",
+        "Picture",
+        "Portrait",
+        "Frame",
+        "Artwork",
+        "Painting",
+        "Photo",
+        "WallArt",
+      ].includes(name) ||
+      lower.includes("about") ||
+      lower.includes("picture") ||
+      lower.includes("portrait") ||
+      lower.includes("artwork") ||
+      lower.includes("painting") ||
+      lower.includes("photo") ||
+      lower.includes("frame") ||
+      lower.includes("bookshelf")
+    ) {
       return "about";
     }
 
     if (
-      ["Contact", "ContactScreen"].includes(object.name)
+      ["Contact", "ContactScreen"].includes(name) ||
+      lower.includes("contact") ||
+      lower.includes("phone")
     ) {
       return "contact";
     }
@@ -122,10 +161,6 @@ export default function RoomInteractions({
       }
     }
 
-    function leave() {
-      onHover(null);
-    }
-
     function cancel() {
       down.current = null;
       onHover(null);
@@ -133,21 +168,22 @@ export default function RoomInteractions({
 
     canvas.addEventListener("pointerdown", start, true);
     canvas.addEventListener("pointermove", move, true);
-    canvas.addEventListener("pointerleave", leave);
+    canvas.addEventListener("pointerleave", cancel);
     canvas.addEventListener("pointercancel", cancel);
 
     return () => {
       canvas.removeEventListener("pointerdown", start, true);
       canvas.removeEventListener("pointermove", move, true);
-      canvas.removeEventListener("pointerleave", leave);
+      canvas.removeEventListener("pointerleave", cancel);
       canvas.removeEventListener("pointercancel", cancel);
     };
   }, [gl, onHover]);
 
   useFrame((_, delta) => {
     surfaces.current.forEach((item) => {
+      // Clear 28% luminance boost on hover
       const target =
-        hovered === item.section ? 1.16 : 1;
+        hovered === item.section ? 1.28 : 1;
 
       item.shade = reduced
         ? target
@@ -169,7 +205,6 @@ export default function RoomInteractions({
       ref={group}
       onPointerMove={(event) => {
         event.stopPropagation();
-
         onHover(
           event.buttons ? null : sectionFor(event.object)
         );
