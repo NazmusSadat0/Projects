@@ -24,7 +24,8 @@ const labels = [
     id: "about",
     text: "About Me",
     badge: "Story",
-    position: [-3.25, 2.9, -0.65],
+    // Positioned at Y = 2.65: perfectly above your photo without clipping the top window
+    position: [-3.45, 2.65, -0.65],
     icon: (
       <svg viewBox="0 0 16 16" fill="none" className="marker-icon-svg">
         <path
@@ -82,25 +83,36 @@ export default function RoomLabels({ elements }) {
         .project(camera);
 
       const point = projected.current;
-      const x = (point.x * 0.5 + 0.5) * size.width;
-      const y = (-point.y * 0.5 + 0.5) * size.height;
+      const rawX = (point.x * 0.5 + 0.5) * size.width;
+      const rawY = (-point.y * 0.5 + 0.5) * size.height;
 
-      const padX = 40;
-      const padY = 40;
+      // Approximate card dimensions for bounds checking
+      const cardHeight = 56;
+      const halfWidth = 85;
 
       const visible =
         cameraSpace.current.z < 0 &&
         point.z >= -1 &&
         point.z <= 1 &&
-        x > padX &&
-        x < size.width - padX &&
-        y > padY &&
-        y < size.height - 20;
+        rawX > -40 &&
+        rawX < size.width + 40 &&
+        rawY > 10 &&
+        rawY < size.height + 40;
+
+      // Ensure the card never slides past the top edge (cardHeight + 14px buffer)
+      const clampedX = Math.max(
+        halfWidth + 12,
+        Math.min(rawX, size.width - halfWidth - 12)
+      );
+      const clampedY = Math.max(
+        cardHeight + 14,
+        Math.min(rawY, size.height - 20)
+      );
 
       element.style.visibility = visible ? "visible" : "hidden";
 
       if (visible) {
-        element.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -100%)`;
+        element.style.transform = `translate3d(${clampedX.toFixed(1)}px, ${clampedY.toFixed(1)}px, 0) translate(-50%, -100%)`;
       }
     });
   });
@@ -165,7 +177,6 @@ export function RoomLabelOverlay({
               </div>
             </button>
 
-            {/* Futuristic sonar tether & ripple anchor */}
             <div className="sonar-tether">
               <span className="sonar-stem" />
               <div className="sonar-target">
