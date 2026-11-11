@@ -19,6 +19,8 @@ import AnimatedMonitor from "./AnimatedMonitor";
 import PhoneScreen from "./PhoneScreen";
 import WindowView from "./WindowView";
 
+import AboutPhoto from "./AboutPhoto";
+
 // Color, roughness, metalness.
 const finishes = {
   Walnut: ["#98633f", 0.52, 0],
@@ -229,6 +231,7 @@ export default function RoomModel({ onReady }) {
       <AnimatedMonitor />
       <PhoneScreen />
       <WindowView />
+      <AboutPhoto />
 
       <pointLight
         position={[-1.72, 2.16, -2.09]}
