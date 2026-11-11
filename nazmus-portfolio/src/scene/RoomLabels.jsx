@@ -24,7 +24,6 @@ const labels = [
     id: "about",
     text: "About Me",
     badge: "Story",
-    // Positioned at Y = 2.65: perfectly above your photo without clipping the top window
     position: [-3.45, 2.65, -0.65],
     icon: (
       <svg viewBox="0 0 16 16" fill="none" className="marker-icon-svg">
@@ -60,6 +59,22 @@ const labels = [
       </svg>
     ),
   },
+  {
+    id: "guestbook",
+    text: "Guestbook",
+    badge: "Reviews",
+    position: [3.45, 2.65, -0.65],
+    icon: (
+      <svg viewBox="0 0 16 16" fill="none" className="marker-icon-svg">
+        <path
+          d="M8 2L9.8 5.6L13.8 6.2L10.9 9L11.6 13L8 11.1L4.4 13L5.1 9L2.2 6.2L6.2 5.6L8 2Z"
+          stroke="currentColor"
+          strokeWidth="1.4"
+          strokeLinejoin="round"
+        />
+      </svg>
+    ),
+  },
 ];
 
 export default function RoomLabels({ elements }) {
@@ -86,7 +101,6 @@ export default function RoomLabels({ elements }) {
       const rawX = (point.x * 0.5 + 0.5) * size.width;
       const rawY = (-point.y * 0.5 + 0.5) * size.height;
 
-      // Approximate card dimensions for bounds checking
       const cardHeight = 56;
       const halfWidth = 85;
 
@@ -99,7 +113,6 @@ export default function RoomLabels({ elements }) {
         rawY > 10 &&
         rawY < size.height + 40;
 
-      // Ensure the card never slides past the top edge (cardHeight + 14px buffer)
       const clampedX = Math.max(
         halfWidth + 12,
         Math.min(rawX, size.width - halfWidth - 12)

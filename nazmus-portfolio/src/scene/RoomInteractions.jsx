@@ -9,7 +9,6 @@ function sectionFor(object) {
     const name = object.name || "";
     const lower = name.toLowerCase();
 
-    // Skip generic architecture and windows
     if (
       name.startsWith("Architecture_") ||
       lower.includes("floor") ||
@@ -28,7 +27,6 @@ function sectionFor(object) {
       return "projects";
     }
 
-    // Matches the wall portrait, picture frame, artwork, and bookshelf
     if (
       [
         "AboutMe",
@@ -44,10 +42,6 @@ function sectionFor(object) {
       lower.includes("about") ||
       lower.includes("picture") ||
       lower.includes("portrait") ||
-      lower.includes("artwork") ||
-      lower.includes("painting") ||
-      lower.includes("photo") ||
-      lower.includes("frame") ||
       lower.includes("bookshelf")
     ) {
       return "about";
@@ -61,6 +55,16 @@ function sectionFor(object) {
       return "contact";
     }
 
+    if (
+      ["Guestbook", "Lounge", "CoffeeTable", "Notebook"].includes(name) ||
+      lower.includes("guestbook") ||
+      lower.includes("review") ||
+      lower.includes("lounge") ||
+      lower.includes("couch")
+    ) {
+      return "guestbook";
+    }
+
     object = object.parent;
   }
 
@@ -70,11 +74,7 @@ function sectionFor(object) {
 function isScreenMesh(object) {
   let current = object;
   while (current) {
-    if (
-      ["ProjectsScreen", "ContactScreen"].includes(
-        current.name
-      )
-    ) {
+    if (["ProjectsScreen", "ContactScreen"].includes(current.name)) {
       return true;
     }
     current = current.parent;
@@ -129,7 +129,6 @@ export default function RoomInteractions({
       items.forEach((item) => {
         item.material.color.copy(item.base);
       });
-
       surfaces.current = [];
     };
   }, [ready]);
@@ -139,7 +138,6 @@ export default function RoomInteractions({
 
     function start(event) {
       if (!event.isPrimary) return;
-
       down.current = {
         x: event.clientX,
         y: event.clientY,
@@ -150,12 +148,10 @@ export default function RoomInteractions({
     function move(event) {
       const pointer = down.current;
       if (!pointer) return;
-
       const distance = Math.hypot(
         event.clientX - pointer.x,
         event.clientY - pointer.y
       );
-
       if (distance > 7) {
         pointer.moved = true;
       }
@@ -181,18 +177,11 @@ export default function RoomInteractions({
 
   useFrame((_, delta) => {
     surfaces.current.forEach((item) => {
-      // Clear 28% luminance boost on hover
-      const target =
-        hovered === item.section ? 1.28 : 1;
+      const target = hovered === item.section ? 1.25 : 1;
 
       item.shade = reduced
         ? target
-        : MathUtils.damp(
-            item.shade,
-            target,
-            12,
-            Math.min(delta, 0.05)
-          );
+        : MathUtils.damp(item.shade, target, 12, Math.min(delta, 0.05));
 
       item.material.color
         .copy(item.base)
@@ -205,22 +194,14 @@ export default function RoomInteractions({
       ref={group}
       onPointerMove={(event) => {
         event.stopPropagation();
-        onHover(
-          event.buttons ? null : sectionFor(event.object)
-        );
+        onHover(event.buttons ? null : sectionFor(event.object));
       }}
       onPointerLeave={() => onHover(null)}
       onClick={(event) => {
         event.stopPropagation();
-
         const section = sectionFor(event.object);
 
-        if (
-          section &&
-          down.current &&
-          !down.current.moved &&
-          event.delta <= 7
-        ) {
+        if (section && down.current && !down.current.moved && event.delta <= 7) {
           onHover(null);
           onOpen(section);
         }
