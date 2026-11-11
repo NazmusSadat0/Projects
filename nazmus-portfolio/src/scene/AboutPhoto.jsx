@@ -1,32 +1,43 @@
 import { useEffect, useState } from "react";
 import { DoubleSide, SRGBColorSpace, TextureLoader } from "three";
 
-// If your file is named sadat.jpg instead of sadat.jpeg, change the extension below:
-import sadatImg from "../assets/sadat.jpeg";
+// Keep this import if your photo is inside src/assets/sadat.jpeg:
+import sadatImg from "../assets/Sadat.jpeg";
 
 export default function AboutPhoto() {
   const [texture, setTexture] = useState(null);
 
   useEffect(() => {
     const loader = new TextureLoader();
-    let loadedTexture = null;
+    let activeTexture = null;
 
     loader.load(
       sadatImg,
-      (tex) => {
-        tex.colorSpace = SRGBColorSpace;
-        tex.needsUpdate = true;
-        loadedTexture = tex;
-        setTexture(tex);
+      (loaded) => {
+        loaded.colorSpace = SRGBColorSpace;
+        loaded.needsUpdate = true;
+        activeTexture = loaded;
+        setTexture(loaded);
       },
       undefined,
-      (err) => {
-        console.error("Failed to load About photo:", err);
+      () => {
+        // Fallback: try /sadat.jpeg from public/ without crashing the room
+        loader.load(
+          "/sadat.jpeg",
+          (fallbackTex) => {
+            fallbackTex.colorSpace = SRGBColorSpace;
+            fallbackTex.needsUpdate = true;
+            activeTexture = fallbackTex;
+            setTexture(fallbackTex);
+          },
+          undefined,
+          (err) => console.warn("Photo could not load:", err)
+        );
       }
     );
 
     return () => {
-      if (loadedTexture) loadedTexture.dispose();
+      if (activeTexture) activeTexture.dispose();
     };
   }, []);
 
@@ -35,7 +46,6 @@ export default function AboutPhoto() {
   return (
     <mesh
       name="AboutMe"
-      // X = -3.81 places the photo cleanly in front of the frame mount (-3.82)
       position={[-3.81, 2.35, -0.65]}
       rotation={[0, Math.PI / 2, 0]}
     >
