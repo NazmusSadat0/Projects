@@ -790,3 +790,104 @@ body {
     padding: 24px 20px 60px;
   }
 }
+
+/* Polished Full-Page Contact Layout */
+.contact-fullscreen-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.contact-info-col {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.contact-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  align-self: flex-start;
+  padding: 8px 16px;
+  border: 1px solid rgba(110, 214, 154, 0.3);
+  border-radius: 999px;
+  background: rgba(110, 214, 154, 0.08);
+  font-size: 12.5px;
+  color: #bcecd0;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 10px #4ade80;
+  animation: sonar-pulse 2s infinite alternate;
+}
+
+.contact-email-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 22px 24px;
+  border: 1px solid rgba(224, 182, 138, 0.35);
+  border-radius: 18px;
+  background: rgba(224, 182, 138, 0.07);
+}
+
+.contact-email-box strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 18px;
+  color: #fffaf0;
+  word-break: break-all;
+}
+
+.contact-email-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.contact-copy-btn,
+.contact-mailto-btn {
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 160ms ease;
+}
+
+.contact-copy-btn {
+  border: none;
+  background: #e0b68a;
+  color: #14221b;
+}
+
+.contact-copy-btn:hover {
+  background: #f0caa3;
+}
+
+.contact-mailto-btn {
+  border: 1px solid rgba(245, 237, 223, 0.25);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fffaf0;
+  text-decoration: none;
+}
+
+.contact-mailto-btn:hover {
+  border-color: #e0b68a;
+  color: #e0b68a;
+}
+
+@media (max-width: 900px) {
+  .contact-fullscreen-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}

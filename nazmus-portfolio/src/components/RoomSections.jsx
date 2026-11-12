@@ -21,9 +21,10 @@ const projects = [
 ];
 
 const contact = {
-  email: "",
-  github: "",
-  linkedin: "",
+  email: "nazmussadat2120@gmail.com", // Put your actual email here
+  github: "https://github.com/NazmusSadat0",
+  linkedin: "https://linkedin.com/in/yourusername",
+  location: "Bangladesh · UTC+6",
 };
 
 const titles = {
@@ -131,34 +132,8 @@ export default function RoomSections({ section, onClose }) {
             </div>
           )}
 
-          {section === "contact" && (
-            <div className="portfolio-contact-view">
-              <p className="portfolio-lead">
-                Have a project in mind or want to collaborate? Let’s connect.
-              </p>
-
-              <div className="portfolio-contact-grid">
-                {contact.email && (
-                  <a href={`mailto:${contact.email}`} className="contact-tile">
-                    <span className="contact-tile-label">Email</span>
-                    <strong>{contact.email}</strong>
-                  </a>
-                )}
-                {contact.github && (
-                  <a href={contact.github} target="_blank" rel="noreferrer" className="contact-tile">
-                    <span className="contact-tile-label">GitHub</span>
-                    <strong>View Profile ↗</strong>
-                  </a>
-                )}
-                {contact.linkedin && (
-                  <a href={contact.linkedin} target="_blank" rel="noreferrer" className="contact-tile">
-                    <span className="contact-tile-label">LinkedIn</span>
-                    <strong>Connect ↗</strong>
-                  </a>
-                )}
-              </div>
-            </div>
-          )}
+          {section === "contact" && <ContactFullPage />}
+    
 
           {section === "guestbook" && <GuestbookFullPage />}
         </main>
@@ -327,6 +302,166 @@ function GuestbookFullPage() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function ContactFullPage() {
+  const [copied, setCopied] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [status, setStatus] = useState("idle");
+
+  function copyEmail() {
+    navigator.clipboard.writeText(contact.email);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2200);
+  }
+
+  async function handleContactSubmit(e) {
+    e.preventDefault();
+    if (!form.name.trim() || !form.email.trim() || !form.message.trim()) return;
+
+    setStatus("sending");
+    try {
+      await fetch(GOOGLE_SHEET_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          type: "contact",
+          ...form,
+        }),
+      });
+      setForm({ name: "", email: "", message: "" });
+      setStatus("success");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  return (
+    <div className="contact-fullscreen-layout">
+      {/* Left Column: Direct Channels & Availability */}
+      <div className="contact-info-col">
+        <div className="contact-status-pill">
+          <span className="status-dot" />
+          <span>Available for projects & roles · {contact.location}</span>
+        </div>
+
+        <p className="portfolio-lead">
+          Need custom AI workflow automation, a full-stack web app, or want to
+          collaborate on an engineering project?
+        </p>
+
+        {/* One-Click Copy Email Card */}
+        <div className="contact-email-box">
+          <div>
+            <span className="contact-tile-label">Direct Email</span>
+            <strong>{contact.email}</strong>
+          </div>
+          <div className="contact-email-actions">
+            <button
+              type="button"
+              className="contact-copy-btn"
+              onClick={copyEmail}
+            >
+              {copied ? "Copied ✓" : "Copy Email"}
+            </button>
+            <a
+              href={`mailto:${contact.email}`}
+              className="contact-mailto-btn"
+              aria-label="Open in email client"
+            >
+              ↗
+            </a>
+          </div>
+        </div>
+
+        {/* Social & Dev Profiles */}
+        <div className="portfolio-contact-grid">
+          {contact.linkedin && (
+            <a
+              href={contact.linkedin}
+              target="_blank"
+              rel="noreferrer"
+              className="contact-tile"
+            >
+              <span className="contact-tile-label">LinkedIn</span>
+              <strong>Connect professionally ↗</strong>
+            </a>
+          )}
+          {contact.github && (
+            <a
+              href={contact.github}
+              target="_blank"
+              rel="noreferrer"
+              className="contact-tile"
+            >
+              <span className="contact-tile-label">GitHub</span>
+              <strong>Explore repositories ↗</strong>
+            </a>
+          )}
+        </div>
+      </div>
+
+      {/* Right Column: Instant Message Form */}
+      <form className="guestbook-form-card contact-form-card" onSubmit={handleContactSubmit}>
+        <h3>Send a Direct Message</h3>
+        <p>Drops straight into my inbox. I usually reply within 24 hours.</p>
+
+        <div className="form-group">
+          <label htmlFor="ct-name">Your Name *</label>
+          <input
+            id="ct-name"
+            type="text"
+            required
+            placeholder="John Doe"
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="ct-email">Your Email *</label>
+          <input
+            id="ct-email"
+            type="email"
+            required
+            placeholder="john@company.com"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="ct-msg">How can I help? *</label>
+          <textarea
+            id="ct-msg"
+            rows="4"
+            required
+            placeholder="Tell me about your project, workflow, or role..."
+            value={form.message}
+            onChange={(e) => setForm({ ...form, message: e.target.value })}
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="guestbook-submit-btn"
+          disabled={status === "sending"}
+        >
+          {status === "sending"
+            ? "Sending Message..."
+            : status === "success"
+            ? "Message Sent ✓"
+            : "Send Message →"}
+        </button>
+
+        {status === "error" && (
+          <p className="form-error-hint">
+            Could not send message. Please copy my email on the left!
+          </p>
+        )}
+      </form>
     </div>
   );
 }
