@@ -130,7 +130,7 @@ export default function RoomExperience() {
       <SceneErrorBoundary>
         <Canvas
           shadows
-          dpr={mobileScreen ? 1 : [1, 1.35]}
+          dpr={[1, 2]}
           camera={{
             position: EYE_POSITION,
             fov: 50,

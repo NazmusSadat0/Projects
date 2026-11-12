@@ -41,7 +41,7 @@ export default function RoomFinish() {
     });
 
     const composer = new EffectComposer(gl, target);
-    composer.setPixelRatio(Math.min(gl.getPixelRatio(), 1.25));
+    composer.setPixelRatio(Math.min(gl.getPixelRatio(), 2));
     composer.setSize(width, height);
 
     const renderPass = new RenderPass(scene, camera);
@@ -79,7 +79,7 @@ export default function RoomFinish() {
     if (!pipeline.current) return;
 
     pipeline.current.setPixelRatio(
-      Math.min(gl.getPixelRatio(), 1.25)
+      Math.min(gl.getPixelRatio(), 2)
     );
     pipeline.current.setSize(size.width, size.height);
   }, [gl, size.width, size.height, viewport.dpr]);
