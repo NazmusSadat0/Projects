@@ -791,103 +791,454 @@ body {
   }
 }
 
-/* Polished Full-Page Contact Layout */
-.contact-fullscreen-layout {
+/* Visual Studio Contact Console */
+.contact-console-grid {
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 48px;
-  align-items: start;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 32px;
+  align-items: stretch;
 }
 
-.contact-info-col {
+.contact-visual-col {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
-.contact-status-pill {
-  display: inline-flex;
+/* 1. Live Radar Telemetry Card */
+.studio-telemetry-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
   align-items: center;
-  gap: 10px;
-  align-self: flex-start;
-  padding: 8px 16px;
-  border: 1px solid rgba(110, 214, 154, 0.3);
-  border-radius: 999px;
-  background: rgba(110, 214, 154, 0.08);
-  font-size: 12.5px;
-  color: #bcecd0;
+  gap: 24px;
+  padding: 26px;
+  border: 1px solid rgba(110, 214, 154, 0.28);
+  border-radius: 22px;
+  background: radial-gradient(
+    circle at 18% 50%,
+    rgba(74, 222, 128, 0.14),
+    rgba(16, 30, 23, 0.85) 70%
+  );
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.status-dot {
+.telemetry-radar {
+  position: relative;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  background: rgba(10, 22, 16, 0.75);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.radar-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px dashed rgba(74, 222, 128, 0.28);
+}
+
+.radar-ring--1 {
+  width: 52px;
+  height: 52px;
+}
+
+.radar-ring--2 {
+  width: 26px;
+  height: 26px;
+}
+
+.radar-sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 70%,
+    rgba(74, 222, 128, 0.4) 100%
+  );
+  animation: radar-spin 3.6s linear infinite;
+}
+
+.radar-center-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: #4ade80;
-  box-shadow: 0 0 10px #4ade80;
-  animation: sonar-pulse 2s infinite alternate;
+  box-shadow: 0 0 12px #4ade80;
+  z-index: 2;
 }
 
-.contact-email-box {
+@keyframes radar-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.telemetry-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.telemetry-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 600 10.5px ui-monospace, monospace;
+  letter-spacing: 0.12em;
+  color: #86efac;
+}
+
+.telemetry-meta h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: #fffaf0;
+}
+
+.telemetry-clock {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.telemetry-clock span {
+  font: 10px ui-monospace, monospace;
+  color: #8fa698;
+  letter-spacing: 0.08em;
+}
+
+.telemetry-clock strong {
+  font: 600 14px ui-monospace, monospace;
+  color: #e0b68a;
+}
+
+/* 2. Direct Email Spotlight Card */
+.channel-spotlight-card {
+  padding: 26px;
+  border: 1px solid rgba(224, 182, 138, 0.35);
+  border-radius: 22px;
+  background: linear-gradient(
+    145deg,
+    rgba(224, 182, 138, 0.12) 0%,
+    rgba(20, 34, 27, 0.78) 100%
+  );
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.channel-spotlight-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding: 22px 24px;
-  border: 1px solid rgba(224, 182, 138, 0.35);
-  border-radius: 18px;
-  background: rgba(224, 182, 138, 0.07);
 }
 
-.contact-email-box strong {
+.channel-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(245, 237, 223, 0.16);
+  color: #e0b68a;
+  flex-shrink: 0;
+  transition: all 200ms ease;
+}
+
+.channel-icon-wrap svg {
+  width: 22px;
+  height: 22px;
+}
+
+.channel-icon-wrap--gold {
+  background: rgba(224, 182, 138, 0.18);
+  border-color: rgba(224, 182, 138, 0.45);
+}
+
+.channel-tag {
+  font: 600 10px ui-monospace, monospace;
+  letter-spacing: 0.14em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(224, 182, 138, 0.16);
+  color: #e0b68a;
+}
+
+.channel-spotlight-body span {
+  font-size: 12.5px;
+  color: #a9bdb0;
+}
+
+.channel-spotlight-body strong {
   display: block;
   margin-top: 4px;
-  font-size: 18px;
-  color: #fffaf0;
+  font-size: clamp(18px, 2.2vw, 23px);
+  color: #ffffff;
+  letter-spacing: -0.02em;
   word-break: break-all;
 }
 
-.contact-email-actions {
+.channel-spotlight-actions {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-.contact-copy-btn,
-.contact-mailto-btn {
-  padding: 10px 16px;
-  border-radius: 10px;
+.spotlight-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 16px;
+  border-radius: 12px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 160ms ease;
+  text-decoration: none;
+  transition: all 180ms ease;
 }
 
-.contact-copy-btn {
+.spotlight-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.spotlight-btn--primary {
   border: none;
   background: #e0b68a;
-  color: #14221b;
+  color: #13211a;
 }
 
-.contact-copy-btn:hover {
-  background: #f0caa3;
+.spotlight-btn--primary:hover {
+  background: #f2cca4;
+  transform: translateY(-2px);
 }
 
-.contact-mailto-btn {
-  border: 1px solid rgba(245, 237, 223, 0.25);
-  background: rgba(255, 255, 255, 0.06);
-  color: #fffaf0;
-  text-decoration: none;
+.spotlight-btn--ghost {
+  border: 1px solid rgba(245, 237, 223, 0.22);
+  background: rgba(255, 255, 255, 0.04);
+  color: #f5eddf;
 }
 
-.contact-mailto-btn:hover {
+.spotlight-btn--ghost:hover {
   border-color: #e0b68a;
   color: #e0b68a;
 }
 
-@media (max-width: 900px) {
-  .contact-fullscreen-layout {
+/* 3. Social Visual Cards */
+.channel-social-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.social-visual-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid rgba(245, 237, 223, 0.14);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  text-decoration: none;
+  color: #fffaf0;
+  transition: all 200ms ease;
+}
+
+.social-visual-card:hover {
+  border-color: #e0b68a;
+  background: rgba(224, 182, 138, 0.1);
+  transform: translateY(-3px);
+}
+
+.social-visual-card:hover .channel-icon-wrap {
+  background: #e0b68a;
+  color: #13211a;
+}
+
+.social-card-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.social-card-copy span {
+  font-size: 11.5px;
+  color: #96ab9e;
+}
+
+.social-card-copy strong {
+  font-size: 14px;
+  color: #ffffff;
+}
+
+/* 4. Right Column: Dispatch Console Form */
+.dispatch-console-card {
+  border: 1px solid rgba(245, 237, 223, 0.18);
+  border-radius: 24px;
+  background: rgba(13, 23, 18, 0.85);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.console-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(245, 237, 223, 0.1);
+}
+
+.console-dots {
+  display: flex;
+  gap: 7px;
+}
+
+.console-dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.console-dots span:nth-child(1) {
+  background: #f87171;
+}
+.console-dots span:nth-child(2) {
+  background: #fbbf24;
+}
+.console-dots span:nth-child(3) {
+  background: #4ade80;
+}
+
+.console-title {
+  font: 11px ui-monospace, monospace;
+  color: #8fa698;
+  letter-spacing: 0.1em;
+}
+
+.console-body {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.console-body h3 {
+  margin: 0;
+  font-size: 24px;
+  color: #fffaf0;
+}
+
+.console-body > p {
+  margin: -12px 0 0;
+  font-size: 13.5px;
+  color: #9cb1a3;
+}
+
+.topic-chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.topic-chip {
+  padding: 8px 14px;
+  border: 1px solid rgba(245, 237, 223, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #c9dad0;
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 160ms ease;
+}
+
+.topic-chip:hover {
+  border-color: rgba(224, 182, 138, 0.5);
+  color: #ffffff;
+}
+
+.topic-chip--active {
+  background: #e0b68a;
+  border-color: #e0b68a;
+  color: #13211a;
+  font-weight: 650;
+  box-shadow: 0 0 16px rgba(224, 182, 138, 0.3);
+}
+
+.console-input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.dispatch-console-card input,
+.dispatch-console-card textarea {
+  width: 100%;
+  padding: 13px 15px;
+  border: 1px solid rgba(245, 237, 223, 0.16);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #fffaf0;
+  font: inherit;
+  font-size: 13.5px;
+  outline: none;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.dispatch-console-card input:focus,
+.dispatch-console-card textarea:focus {
+  border-color: #e0b68a;
+  background: rgba(224, 182, 138, 0.05);
+}
+
+.dispatch-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 24px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #e6be94 0%, #cfa06e 100%);
+  color: #13211a;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.dispatch-submit-btn svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 200ms ease;
+}
+
+.dispatch-submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(224, 182, 138, 0.3);
+}
+
+.dispatch-submit-btn:hover:not(:disabled) svg {
+  transform: translateX(4px);
+}
+
+@media (max-width: 920px) {
+  .contact-console-grid {
     grid-template-columns: 1fr;
-    gap: 32px;
+  }
+  .console-input-row,
+  .channel-social-row {
+    grid-template-columns: 1fr;
   }
 }

@@ -21,10 +21,12 @@ const projects = [
 ];
 
 const contact = {
-  email: "nazmussadat2120@gmail.com", // Put your actual email here
+  email: "nazmussadat2120@gmail.com", // 
   github: "https://github.com/NazmusSadat0",
-  linkedin: "https://linkedin.com/in/yourusername",
-  location: "Bangladesh · UTC+6",
+  githubHandle: "@NazmusSadat0",
+  linkedin: "https://www.linkedin.com/in/nazmus-sadat-76b951278/",
+  linkedinHandle: "Nazmus Sadat",
+  location: "Khulna / Dhaka, BD",
 };
 
 const titles = {
@@ -306,10 +308,37 @@ function GuestbookFullPage() {
   );
 }
 
+const INQUIRY_TOPICS = [
+  "AI Automation",
+  "Full-Stack Web",
+  "3D / WebGL",
+  "General / Role",
+];
+
 function ContactFullPage() {
   const [copied, setCopied] = useState(false);
+  const [localTime, setLocalTime] = useState("");
+  const [topic, setTopic] = useState("AI Automation");
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState("idle");
+
+  // Live ticking UTC+6 clock
+  useEffect(() => {
+    function updateClock() {
+      const now = new Date();
+      const formatted = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Dhaka",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+      }).format(now);
+      setLocalTime(formatted);
+    }
+    updateClock();
+    const timer = setInterval(updateClock, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   function copyEmail() {
     navigator.clipboard.writeText(contact.email);
@@ -328,7 +357,9 @@ function ContactFullPage() {
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({
           type: "contact",
-          ...form,
+          name: form.name,
+          email: form.email,
+          message: `[${topic}] ${form.message}`,
         }),
       });
       setForm({ name: "", email: "", message: "" });
@@ -339,128 +370,273 @@ function ContactFullPage() {
   }
 
   return (
-    <div className="contact-fullscreen-layout">
-      {/* Left Column: Direct Channels & Availability */}
-      <div className="contact-info-col">
-        <div className="contact-status-pill">
-          <span className="status-dot" />
-          <span>Available for projects & roles · {contact.location}</span>
+    <div className="contact-console-grid">
+      {/* Left Column: Visual Studio Telemetry & Channels */}
+      <div className="contact-visual-col">
+        {/* Live Studio Radar & Timezone Card */}
+        <div className="studio-telemetry-card">
+          <div className="telemetry-radar" aria-hidden="true">
+            <span className="radar-ring radar-ring--1" />
+            <span className="radar-ring radar-ring--2" />
+            <span className="radar-sweep" />
+            <span className="radar-center-dot" />
+          </div>
+
+          <div className="telemetry-meta">
+            <div className="telemetry-badge">
+              <span className="status-dot" />
+              <span>ONLINE · OPEN FOR PROJECTS</span>
+            </div>
+            <h2>{contact.location}</h2>
+            <div className="telemetry-clock">
+              <span>LOCAL STUDIO TIME (UTC+6)</span>
+              <strong>{localTime || "12:00:00 PM"}</strong>
+            </div>
+          </div>
         </div>
 
-        <p className="portfolio-lead">
-          Need custom AI workflow automation, a full-stack web app, or want to
-          collaborate on an engineering project?
-        </p>
+        {/* Direct Email Spotlight Card */}
+        <div className="channel-spotlight-card">
+          <div className="channel-spotlight-top">
+            <div className="channel-icon-wrap channel-icon-wrap--gold">
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect
+                  x="3"
+                  y="5"
+                  width="18"
+                  height="14"
+                  rx="3"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                />
+                <path
+                  d="M3.5 6.5L12 13L20.5 6.5"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+            <span className="channel-tag">DIRECT LINE</span>
+          </div>
 
-        {/* One-Click Copy Email Card */}
-        <div className="contact-email-box">
-          <div>
-            <span className="contact-tile-label">Direct Email</span>
+          <div className="channel-spotlight-body">
+            <span>Drop an email anytime</span>
             <strong>{contact.email}</strong>
           </div>
-          <div className="contact-email-actions">
+
+          <div className="channel-spotlight-actions">
             <button
               type="button"
-              className="contact-copy-btn"
+              className="spotlight-btn spotlight-btn--primary"
               onClick={copyEmail}
             >
-              {copied ? "Copied ✓" : "Copy Email"}
+              <svg viewBox="0 0 18 18" fill="none">
+                <rect
+                  x="6"
+                  y="6"
+                  width="9"
+                  height="9"
+                  rx="2"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+                <path
+                  d="M12 6V4.5C12 3.67 11.33 3 10.5 3H4.5C3.67 3 3 3.67 3 4.5V10.5C3 11.33 3.67 12 4.5 12H6"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+              </svg>
+              <span>{copied ? "Copied to Clipboard ✓" : "Copy Address"}</span>
             </button>
+
             <a
               href={`mailto:${contact.email}`}
-              className="contact-mailto-btn"
-              aria-label="Open in email client"
+              className="spotlight-btn spotlight-btn--ghost"
             >
-              ↗
+              <span>Open Mail App ↗</span>
             </a>
           </div>
         </div>
 
-        {/* Social & Dev Profiles */}
-        <div className="portfolio-contact-grid">
+        {/* Branded Social Cards */}
+        <div className="channel-social-row">
           {contact.linkedin && (
             <a
               href={contact.linkedin}
               target="_blank"
               rel="noreferrer"
-              className="contact-tile"
+              className="social-visual-card"
             >
-              <span className="contact-tile-label">LinkedIn</span>
-              <strong>Connect professionally ↗</strong>
+              <div className="channel-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M16 8C17.59 8 19.12 8.63 20.24 9.76C21.37 10.88 22 12.41 22 14V21H18V14C18 13.47 17.79 12.96 17.41 12.59C17.04 12.21 16.53 12 16 12C15.47 12 14.96 12.21 14.59 12.59C14.21 12.96 14 13.47 14 14V21H10V14C10 12.41 10.63 10.88 11.76 9.76C12.88 8.63 14.41 8 16 8Z"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <rect
+                    x="2"
+                    y="9"
+                    width="4"
+                    height="12"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                  />
+                  <circle
+                    cx="4"
+                    cy="4"
+                    r="2"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                  />
+                </svg>
+              </div>
+              <div className="social-card-copy">
+                <span>LinkedIn</span>
+                <strong>{contact.linkedinHandle || "Connect"} ↗</strong>
+              </div>
             </a>
           )}
+
           {contact.github && (
             <a
               href={contact.github}
               target="_blank"
               rel="noreferrer"
-              className="contact-tile"
+              className="social-visual-card"
             >
-              <span className="contact-tile-label">GitHub</span>
-              <strong>Explore repositories ↗</strong>
+              <div className="channel-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M15 22V18C15.14 16.75 14.78 15.49 14 14.5C17 14.5 20 12.5 20 9C20.08 7.75 19.73 6.52 19 5.5C19.28 4.35 19.28 3.15 19 2C19 2 18 2 16 3.5C13.36 3 10.64 3 8 3.5C6 2 5 2 5 2C4.7 3.15 4.7 4.35 5 5.5C4.27 6.52 3.92 7.75 4 9C4 12.5 7 14.5 10 14.5C9.39 15.18 9.03 16.05 9 17V22"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M9 18C4.49 20 4 16 2 16"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </div>
+              <div className="social-card-copy">
+                <span>GitHub</span>
+                <strong>{contact.githubHandle || "Codebase"} ↗</strong>
+              </div>
             </a>
           )}
         </div>
       </div>
 
-      {/* Right Column: Instant Message Form */}
-      <form className="guestbook-form-card contact-form-card" onSubmit={handleContactSubmit}>
-        <h3>Send a Direct Message</h3>
-        <p>Drops straight into my inbox. I usually reply within 24 hours.</p>
-
-        <div className="form-group">
-          <label htmlFor="ct-name">Your Name *</label>
-          <input
-            id="ct-name"
-            type="text"
-            required
-            placeholder="John Doe"
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-          />
+      {/* Right Column: Interactive Dispatch Console */}
+      <form className="dispatch-console-card" onSubmit={handleContactSubmit}>
+        <div className="console-header">
+          <div className="console-dots" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
+          <span className="console-title">DISPATCH // NEW_INQUIRY.SH</span>
         </div>
 
-        <div className="form-group">
-          <label htmlFor="ct-email">Your Email *</label>
-          <input
-            id="ct-email"
-            type="email"
-            required
-            placeholder="john@company.com"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-          />
+        <div className="console-body">
+          <h3>Initiate a Conversation</h3>
+          <p>Select a topic below and send a direct transmission to my inbox.</p>
+
+          {/* Interactive Topic Selector Chips */}
+          <div className="form-group">
+            <label>01 / What are we building?</label>
+            <div className="topic-chip-group" role="radiogroup">
+              {INQUIRY_TOPICS.map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  className={[
+                    "topic-chip",
+                    topic === item ? "topic-chip--active" : "",
+                  ].join(" ")}
+                  onClick={() => setTopic(item)}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="console-input-row">
+            <div className="form-group">
+              <label htmlFor="ct-name">02 / Your Name *</label>
+              <input
+                id="ct-name"
+                type="text"
+                required
+                placeholder="Alex Rivera"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="ct-email">03 / Your Email *</label>
+              <input
+                id="ct-email"
+                type="email"
+                required
+                placeholder="alex@company.com"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="ct-msg">04 / Project Brief or Message *</label>
+            <textarea
+              id="ct-msg"
+              rows="4"
+              required
+              placeholder="Tell me about your timeline, goals, or the workflow you want to automate..."
+              value={form.message}
+              onChange={(e) => setForm({ ...form, message: e.target.value })}
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="dispatch-submit-btn"
+            disabled={status === "sending"}
+          >
+            <span>
+              {status === "sending"
+                ? "Transmitting to Studio..."
+                : status === "success"
+                ? "Transmission Received ✓"
+                : "Send Transmission"}
+            </span>
+            <svg viewBox="0 0 20 20" fill="none">
+              <path
+                d="M4 10H16M16 10L11 5M16 10L11 15"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+
+          {status === "error" && (
+            <p className="form-error-hint">
+              Transmission failed. Please copy my email on the left!
+            </p>
+          )}
         </div>
-
-        <div className="form-group">
-          <label htmlFor="ct-msg">How can I help? *</label>
-          <textarea
-            id="ct-msg"
-            rows="4"
-            required
-            placeholder="Tell me about your project, workflow, or role..."
-            value={form.message}
-            onChange={(e) => setForm({ ...form, message: e.target.value })}
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="guestbook-submit-btn"
-          disabled={status === "sending"}
-        >
-          {status === "sending"
-            ? "Sending Message..."
-            : status === "success"
-            ? "Message Sent ✓"
-            : "Send Message →"}
-        </button>
-
-        {status === "error" && (
-          <p className="form-error-hint">
-            Could not send message. Please copy my email on the left!
-          </p>
-        )}
       </form>
     </div>
   );
