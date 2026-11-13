@@ -1,175 +1,163 @@
 import { useEffect, useState } from "react";
 import "../styles/RoomPreLoader.css";
 
+const LOADING_STAGES = [
+  { threshold: 0, text: "Initializing 3D environment..." },
+  { threshold: 25, text: "Building studio architecture & walls..." },
+  { threshold: 55, text: "Calibrating warm lighting & shadows..." },
+  { threshold: 80, text: "Booting interactive terminal & guestbook..." },
+  { threshold: 100, text: "Welcome to Nazmus's Room." },
+];
+
 export default function RoomPreloader({ ready }) {
+  const [progress, setProgress] = useState(0);
+  const [leaving, setLeaving] = useState(false);
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    if (!ready) return;
+    let rafId;
+    let current = 0;
 
-    const reduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+    const tick = () => {
+      // Cap at 92% until the 3D model actually finishes loading
+      const target = ready ? 100 : 92;
+      const speed = ready ? 1.6 : 0.45;
 
-    const timeout = window.setTimeout(
-      () => setVisible(false),
-      reduced ? 120 : 650
-    );
+      if (current < target) {
+        current = Math.min(target, current + speed);
+        setProgress(Math.floor(current));
+        rafId = requestAnimationFrame(tick);
+      } else if (current >= 100) {
+        setProgress(100);
+      } else {
+        rafId = requestAnimationFrame(tick);
+      }
+    };
 
-    return () => window.clearTimeout(timeout);
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
   }, [ready]);
 
+  useEffect(() => {
+    if (progress < 100) return;
+
+    // Hold at 100% briefly, then trigger curtain exit
+    const leaveTimer = setTimeout(() => setLeaving(true), 380);
+    const hideTimer = setTimeout(() => setVisible(false), 1050);
+
+    return () => {
+      clearTimeout(leaveTimer);
+      clearTimeout(hideTimer);
+    };
+  }, [progress]);
+
   if (!visible) return null;
+
+  const currentStage =
+    [...LOADING_STAGES].reverse().find((s) => progress >= s.threshold)?.text ||
+    LOADING_STAGES[0].text;
 
   return (
     <div
       className={[
         "room-preloader",
-        ready ? "room-preloader--leaving" : "",
+        leaving ? "room-preloader--leaving" : "",
       ].join(" ")}
       role="status"
       aria-live="polite"
-      aria-busy={!ready}
+      aria-busy={progress < 100}
     >
-      <span className="preloader-brand">
-        NAZMUS <span>/</span> PORTFOLIO
-      </span>
+      <div className="preloader-ambient-glow" aria-hidden="true" />
 
-      <div className="preloader-content">
-        <div
-          className="preloader-illustration"
-          aria-hidden="true"
-        >
-          <div className="preloader-halo" />
+      {/* Top Brand Header */}
+      <header className="preloader-top-bar">
+        <span className="preloader-brand">
+          NAZMUS <span>//</span> 3D STUDIO
+        </span>
+        <span className="preloader-coords">22.8456° N, 89.5403° E</span>
+      </header>
 
-          <svg
-            viewBox="0 0 360 250"
-            fill="none"
-            className="preloader-room"
-          >
-            {/* Room outline */}
-            <g className="preloader-trace preloader-trace--shell">
-              <path
-                pathLength="1"
-                d="M48 180 174 239 314 170 187 113Z"
+      {/* Center Interactive Progress Showcase */}
+      <div className="preloader-center">
+        {/* Animated Isometric Wireframe Cube + Counter */}
+        <div className="preloader-hero-row">
+          <div className="preloader-wireframe" aria-hidden="true">
+            <svg viewBox="0 0 120 120" fill="none">
+              <polygon
+                points="60,12 104,36 104,84 60,108 16,84 16,36"
+                stroke="rgba(224, 182, 138, 0.25)"
+                strokeWidth="1.5"
               />
-
-              <path
-                pathLength="1"
-                d="M48 180V63L187 13V113M187 13 314 65V170"
+              <polygon
+                points="60,12 104,36 60,60 16,36"
+                stroke="#e0b68a"
+                strokeWidth="1.8"
+                strokeDasharray="200"
+                strokeDashoffset={200 - progress * 2}
               />
-
-              <path
-                pathLength="1"
-                d="M48 190 174 249 314 180"
+              <polyline
+                points="16,36 60,60 60,108"
+                stroke="#e0b68a"
+                strokeWidth="1.8"
               />
-            </g>
-
-            {/* Window and wall art */}
-            <g className="preloader-trace preloader-trace--window">
-              <path
-                pathLength="1"
-                d="M208 43 287 75V116L208 84ZM247 59V100"
+              <polyline
+                points="104,36 60,60"
+                stroke="rgba(224, 182, 138, 0.5)"
+                strokeWidth="1.5"
               />
+              <circle cx="60" cy="60" r="4" fill="#4ade80" />
+            </svg>
+          </div>
 
-              <path
-                pathLength="1"
-                d="M70 70 110 56V99L70 114Z"
-              />
-            </g>
-
-            {/* Desk, computer and keyboard */}
-            <g className="preloader-trace preloader-trace--desk">
-              <path
-                pathLength="1"
-                d="M119 142 204 103 288 140 207 180ZM126 146V183M278 146V184M211 180V216"
-              />
-
-              <path
-                pathLength="1"
-                d="M181 108V76L228 96V129ZM201 119V133L192 137 211 145 221 140"
-              />
-
-              <path
-                pathLength="1"
-                d="M170 145 184 138 212 151 197 158Z"
-              />
-            </g>
-
-            {/* Chair and plant */}
-            <g className="preloader-trace preloader-trace--details">
-              <path
-                pathLength="1"
-                d="M82 159V137L109 149V173ZM83 162 73 170 100 184 111 176M79 174V190M104 181V203"
-              />
-
-              <path
-                pathLength="1"
-                d="M257 149 262 155 271 151 274 138 256 132ZM265 136V108M265 124Q245 119 249 106Q264 109 265 124ZM266 117Q278 102 285 112Q280 121 266 117Z"
-              />
-            </g>
-
-            {/* Warm desk lamp */}
-            <g className="preloader-lamp">
-              <path d="M151 135 158 131 166 135 159 139ZM159 131V113L145 102 153 87" />
-
-              <path
-                d="M149 87Q158 82 166 92L149 98Z"
-                fill="currentColor"
-              />
-
-              <path
-                className="preloader-light"
-                d="M149 98 137 126 183 139 166 92Z"
-                fill="currentColor"
-                stroke="none"
-              />
-            </g>
-
-            <circle
-              className="preloader-spark"
-              cx="291"
-              cy="39"
-              r="2"
-              fill="currentColor"
-            />
-
-            <circle
-              className="preloader-spark preloader-spark--second"
-              cx="40"
-              cy="126"
-              r="1.5"
-              fill="currentColor"
-            />
-          </svg>
+          <div className="preloader-percentage-wrap">
+            <span className="preloader-number">
+              {String(progress).padStart(2, "0")}
+            </span>
+            <span className="preloader-percent-sign">%</span>
+          </div>
         </div>
 
-        <p className="preloader-eyebrow">
-          A PERSONAL SPACE
-        </p>
+        {/* High-Impact Visual Progress Bar */}
+        <div className="preloader-bar-container">
+          <div className="preloader-bar-header">
+            <span className="preloader-stage-text">{currentStage}</span>
+            <span className="preloader-fraction">{progress} / 100</span>
+          </div>
 
-        <h1 className="preloader-title">
-          Step inside<span>.</span>
-        </h1>
+          <div className="preloader-bar-track">
+            <div
+              className="preloader-bar-fill"
+              style={{ width: `${progress}%` }}
+            >
+              <span className="preloader-bar-spark" />
+            </div>
+          </div>
 
-        <div className="preloader-status">
-          <span
-            className="preloader-status-dot"
-            aria-hidden="true"
-          />
-
-          <span>
-            {ready
-              ? "Your room is ready"
-              : "Loading your room"}
-          </span>
+          {/* 20-Segment Technical Tick Marks */}
+          <div className="preloader-segments" aria-hidden="true">
+            {Array.from({ length: 20 }).map((_, i) => (
+              <span
+                key={i}
+                className={
+                  progress >= (i + 1) * 5 ? "segment-tick--active" : ""
+                }
+              />
+            ))}
+          </div>
         </div>
 
-        <div
-          className="preloader-track"
-          aria-hidden="true"
-        >
-          <span />
+        {/* Built-In Controls Tip (So visitors read it while loading) */}
+        <div className="preloader-controls-card">
+          <div className="controls-drag-anim" aria-hidden="true">
+            <span>‹</span>
+            <span className="controls-dot" />
+            <span>›</span>
+          </div>
+          <p>
+            <strong>How to navigate:</strong> Drag the screen or press{" "}
+            <kbd>←</kbd> <kbd>→</kbd> arrow keys to rotate the room. Click any
+            glowing marker to open sections.
+          </p>
         </div>
       </div>
     </div>
