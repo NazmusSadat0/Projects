@@ -4,7 +4,6 @@ import {
   useCallback,
   useRef,
   useState,
-  useSyncExternalStore,
 } from "react";
 
 import { Canvas } from "@react-three/fiber";
@@ -28,22 +27,6 @@ import RoomLabels, {
 
 import RoomSections from "../components/RoomSections.jsx";
 import RoomPreloader from "../components/RoomPreLoader.jsx";
-
-const MOBILE_QUERY = "(width < 700px)";
-
-function subscribeToScreenWidth(onChange) {
-  const query = window.matchMedia(MOBILE_QUERY);
-  query.addEventListener("change", onChange);
-  return () => query.removeEventListener("change", onChange);
-}
-
-function isMobileScreen() {
-  return window.matchMedia(MOBILE_QUERY).matches;
-}
-
-function desktopScreenSnapshot() {
-  return false;
-}
 
 class SceneErrorBoundary extends Component {
   state = { error: null };
@@ -78,11 +61,6 @@ class SceneErrorBoundary extends Component {
 
 export default function RoomExperience() {
   const labelElements = useRef([]);
-  const mobileScreen = useSyncExternalStore(
-    subscribeToScreenWidth,
-    isMobileScreen,
-    desktopScreenSnapshot,
-  );
 
   const [ready, setReady] = useState(false);
   const [hovered, setHovered] = useState(null);
@@ -244,38 +222,36 @@ export default function RoomExperience() {
           ›
         </button>
 
-            
-
-        <div
+        {/* High-visibility onboarding HUD */}
+        <aside
           className={[
             "room-guide",
             ready && !interacted && !section ? "room-guide--visible" : "",
           ].join(" ")}
-          aria-hidden="true"
+          aria-label="Interactive guide"
         >
-          <div className="room-guide-icon">
-            <svg viewBox="0 0 64 28" fill="none">
-              <path
-                d="M14 14H4M4 14L9 9M4 14L9 19M50 14H60M60 14L55 9M60 14L55 19"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <circle
-                className="room-guide-dot"
-                cx="32"
-                cy="14"
-                r="5"
-                fill="currentColor"
-              />
-            </svg>
-          </div>
+          <div className="room-guide-content">
+            <div className="room-guide-drag-icon" aria-hidden="true">
+              <svg viewBox="0 0 44 24" fill="none">
+                <path
+                  d="M10 12H2M2 12L6 8M2 12L6 16M34 12H42M42 12L38 8M42 12L38 16"
+                  stroke="#e2b17b"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <circle cx="22" cy="12" r="4.5" fill="#e2b17b" />
+              </svg>
+            </div>
 
-          <span className="room-guide-text">
-            Drag or press <kbd>←</kbd> <kbd>→</kbd> to look around · Click markers to explore
-          </span>
-        </div>
+            <div className="room-guide-copy">
+              <strong>Drag or use keys to look around</strong>
+              <span>
+                Press <kbd>←</kbd> <kbd>→</kbd> or click 3D markers to explore
+              </span>
+            </div>
+          </div>
+        </aside>
 
         {section && (
           <RoomSections
@@ -289,7 +265,7 @@ export default function RoomExperience() {
           className="room-keyboard-nav"
           aria-label="Portfolio sections"
         >
-          {["projects", "about", "contact"].map((id) => (
+          {["projects", "about", "contact", "guestbook"].map((id) => (
             <button
               key={id}
               onClick={() => setSection(id)}
