@@ -26,6 +26,8 @@ const contact = {
   githubHandle: "@NazmusSadat0",
   linkedin: "https://www.linkedin.com/in/nazmus-sadat-76b951278/",
   linkedinHandle: "Nazmus Sadat",
+  whatsapp: "https://wa.me/8801613974734",
+  whatsappDisplay: "+880 1613-974734",
   location: "Khulna / Dhaka, BD",
 };
 
@@ -135,7 +137,7 @@ export default function RoomSections({ section, onClose }) {
           )}
 
           {section === "contact" && <ContactFullPage />}
-    
+
 
           {section === "guestbook" && <GuestbookFullPage />}
         </main>
@@ -461,6 +463,7 @@ function ContactFullPage() {
         </div>
 
         {/* Branded Social Cards */}
+        {/* Branded Social & Instant Chat Cards */}
         <div className="channel-social-row">
           {contact.linkedin && (
             <a
@@ -478,26 +481,13 @@ function ContactFullPage() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
-                  <rect
-                    x="2"
-                    y="9"
-                    width="4"
-                    height="12"
-                    stroke="currentColor"
-                    strokeWidth="1.7"
-                  />
-                  <circle
-                    cx="4"
-                    cy="4"
-                    r="2"
-                    stroke="currentColor"
-                    strokeWidth="1.7"
-                  />
+                  <rect x="2" y="9" width="4" height="12" stroke="currentColor" strokeWidth="1.7" />
+                  <circle cx="4" cy="4" r="2" stroke="currentColor" strokeWidth="1.7" />
                 </svg>
               </div>
               <div className="social-card-copy">
                 <span>LinkedIn</span>
-                <strong>{contact.linkedinHandle || "Connect"} ↗</strong>
+                <strong>{contact.linkedinHandle} ↗</strong>
               </div>
             </a>
           )}
@@ -518,17 +508,37 @@ function ContactFullPage() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
-                  <path
-                    d="M9 18C4.49 20 4 16 2 16"
-                    stroke="currentColor"
-                    strokeWidth="1.7"
-                    strokeLinecap="round"
-                  />
+                  <path d="M9 18C4.49 20 4 16 2 16" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
                 </svg>
               </div>
               <div className="social-card-copy">
                 <span>GitHub</span>
-                <strong>{contact.githubHandle || "Codebase"} ↗</strong>
+                <strong>{contact.githubHandle} ↗</strong>
+              </div>
+            </a>
+          )}
+
+          {contact.whatsapp && (
+            <a
+              href={contact.whatsapp}
+              target="_blank"
+              rel="noreferrer"
+              className="social-visual-card social-visual-card--full"
+            >
+              <div className="channel-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M21 11.5C21 16.47 16.97 20.5 12 20.5C10.46 20.5 9.01 20.11 7.74 19.42L3 21L4.62 16.38C3.89 14.92 3 13.26 3 11.5C3 6.53 7.03 2.5 12 2.5C16.97 2.5 21 6.53 21 11.5Z"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+              <div className="social-card-copy">
+                <span>WhatsApp Direct</span>
+                <strong>{contact.whatsappDisplay || "Chat on WhatsApp"} ↗</strong>
               </div>
             </a>
           )}
@@ -617,8 +627,8 @@ function ContactFullPage() {
               {status === "sending"
                 ? "Transmitting to Studio..."
                 : status === "success"
-                ? "Transmission Received ✓"
-                : "Send Transmission"}
+                  ? "Transmission Received ✓"
+                  : "Send Transmission"}
             </span>
             <svg viewBox="0 0 20 20" fill="none">
               <path

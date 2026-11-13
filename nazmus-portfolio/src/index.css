@@ -1242,3 +1242,7 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+.social-visual-card--full {
+  grid-column: 1 / -1;
+}
