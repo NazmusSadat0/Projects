@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import sadatImg from "../assets/Sadat.jpeg";
 
 // PASTE YOUR DEPLOYED GOOGLE APPS SCRIPT URL HERE:
 const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwxiOk4ab3xeSIqsMYo6O20OK7jipUdhVQuVgMKtGD79QUKSODxL27oo6xDqO1gaii-Zw/exec";
@@ -112,28 +113,7 @@ export default function RoomSections({ section, onClose }) {
           )}
 
           {section === "about" && (
-            <div className="portfolio-about-view">
-              <div className="portfolio-about-hero">
-                <p className="portfolio-lead">
-                  I’m Nazmus, a Computer Science & Engineering student at Khulna University
-                  of Engineering & Technology (KUET).
-                </p>
-                <p>
-                  I specialize in full-stack web applications, 3D interactive experiences, and
-                  AI automation workflows.
-                </p>
-
-                <div className="portfolio-tags">
-                  <span>React</span>
-                  <span>Three.js</span>
-                  <span>Next.js</span>
-                  <span>Node.js</span>
-                  <span>C / C++</span>
-                  <span>AI Automation</span>
-                  <span>Supabase</span>
-                </div>
-              </div>
-            </div>
+            <AboutFullPage onNavigate={onClose} />
           )}
 
           {section === "contact" && <ContactFullPage />}
@@ -648,6 +628,367 @@ function ContactFullPage() {
           )}
         </div>
       </form>
+    </div>
+  );
+}
+
+const TECH_ARSENAL = [
+  {
+    name: "C",
+    domain: "systems",
+    level: "92%",
+    color: "#5c8dbc",
+    icon: "https://cdn.simpleicons.org/c/5c8dbc",
+  },
+  {
+    name: "C++",
+    domain: "systems",
+    level: "88%",
+    color: "#00599C",
+    icon: "https://cdn.simpleicons.org/cplusplus/00599C",
+  },
+  {
+    name: "Python",
+    domain: "ai",
+    level: "90%",
+    color: "#FFD43B",
+    icon: "https://cdn.simpleicons.org/python/FFD43B",
+  },
+  {
+    name: "JavaScript",
+    domain: "web",
+    level: "94%",
+    color: "#F7DF1E",
+    icon: "https://cdn.simpleicons.org/javascript/F7DF1E",
+  },
+  {
+    name: "React",
+    domain: "web",
+    level: "95%",
+    color: "#61DAFB",
+    icon: "https://cdn.simpleicons.org/react/61DAFB",
+  },
+  {
+    name: "Next.js",
+    domain: "web",
+    level: "88%",
+    color: "#ffffff",
+    icon: "https://cdn.simpleicons.org/nextdotjs/ffffff",
+  },
+  {
+    name: "Three.js / R3F",
+    domain: "web",
+    level: "86%",
+    color: "#e0b68a",
+    icon: "https://cdn.simpleicons.org/threedotjs/e0b68a",
+  },
+  {
+    name: "Vite",
+    domain: "web",
+    level: "92%",
+    color: "#646CFF",
+    icon: "https://cdn.simpleicons.org/vite/646CFF",
+  },
+  {
+    name: "Node.js",
+    domain: "backend",
+    level: "89%",
+    color: "#5FA04E",
+    icon: "https://cdn.simpleicons.org/nodedotjs/5FA04E",
+  },
+  {
+    name: "n8n Workflows",
+    domain: "ai",
+    level: "96%",
+    color: "#EA4B71",
+    icon: "https://cdn.simpleicons.org/n8n/EA4B71",
+  },
+  {
+    name: "Supabase",
+    domain: "backend",
+    level: "91%",
+    color: "#3ECF8E",
+    icon: "https://cdn.simpleicons.org/supabase/3ECF8E",
+  },
+  {
+    name: "Firebase",
+    domain: "backend",
+    level: "87%",
+    color: "#DD2C00",
+    icon: "https://cdn.simpleicons.org/firebase/FFCA28",
+  },
+  {
+    name: "Docker",
+    domain: "backend",
+    level: "84%",
+    color: "#2496ED",
+    icon: "https://cdn.simpleicons.org/docker/2496ED",
+  },
+  {
+    name: "Git & GitHub",
+    domain: "systems",
+    level: "94%",
+    color: "#F05032",
+    icon: "https://cdn.simpleicons.org/git/F05032",
+  },
+];
+
+const DOMAIN_FILTERS = [
+  { id: "all", label: "All Systems (14)" },
+  { id: "ai", label: "AI & Automation" },
+  { id: "web", label: "3D & Frontend" },
+  { id: "backend", label: "Backend & Cloud" },
+  { id: "systems", label: "Low-Level / Core" },
+];
+
+function AboutFullPage() {
+  const [activeDomain, setActiveDomain] = useState("all");
+
+  const filteredStack =
+    activeDomain === "all"
+      ? TECH_ARSENAL
+      : TECH_ARSENAL.filter((item) => item.domain === activeDomain);
+
+  return (
+    <div className="about-cyber-showcase">
+      {/* 1. HERO ROW: Holographic Avatar Scanner + Animated Kinetic Headline */}
+      <div className="about-hero-deck">
+        {/* Left: Animated Hologram Portrait Frame */}
+        <div className="holo-avatar-card">
+          <div className="holo-orbit-ring holo-orbit-ring--outer" aria-hidden="true" />
+          <div className="holo-orbit-ring holo-orbit-ring--inner" aria-hidden="true" />
+
+          <div className="holo-image-frame">
+            <img src={sadatImg} alt="Nazmus Sadat" className="holo-photo" />
+            <span className="holo-laser-scan" aria-hidden="true" />
+            <div className="holo-corner holo-corner--tl" />
+            <div className="holo-corner holo-corner--tr" />
+            <div className="holo-corner holo-corner--bl" />
+            <div className="holo-corner holo-corner--br" />
+          </div>
+
+          <div className="holo-identity-footer">
+            <div className="holo-status-chip">
+              <span className="status-dot" />
+              <span>SYS_ACTIVE // KUET_2K25</span>
+            </div>
+            <h3>Nazmus Sadat</h3>
+            <p>Founder of Fillara AI · Full-Stack & AI Engineer</p>
+          </div>
+        </div>
+
+        {/* Right: Kinetic Visual Typography & Live Architecture Diagram */}
+        <div className="about-kinetic-panel">
+          <div className="kinetic-badge-row">
+            <span className="cyber-pill cyber-pill--gold">
+              ⚡ FOUNDER @ FILLARA AI
+            </span>
+            <span className="cyber-pill cyber-pill--green">
+              🎓 CSE UNDERGRAD @ KUET
+            </span>
+            <span className="cyber-pill">🌐 FULL-STACK ARCHITECT</span>
+          </div>
+
+          <h2 className="kinetic-display-title">
+            Engineering <span className="gradient-stroke-text">Autonomous AI</span>{" "}
+            &amp; High-Velocity{" "}
+            <span className="shimmer-gold-text">3D Web Systems.</span>
+          </h2>
+
+          <p className="kinetic-lead-copy">
+            I’m <strong>Nazmus Sadat</strong>—bridging raw{" "}
+            <span className="inline-code-chip">C / C++</span> memory-level
+            fundamentals from <strong>KUET CSE</strong> with production{" "}
+            <span className="inline-code-chip">RAG Pipelines</span>,{" "}
+            <span className="inline-code-chip">n8n AI Agents</span>, and spatial{" "}
+            <span className="inline-code-chip">React + Three.js</span>{" "}
+            experiences.
+          </p>
+
+          {/* Animated SVG Neural / Pipeline Visualizer */}
+          <div className="pipeline-visualizer-card">
+            <div className="pipeline-header">
+              <span>LIVE ARCHITECTURE PIPELINE // FILLARA_ENGINE</span>
+              <span className="pipeline-pulse-tag">● REAL-TIME FLOW</span>
+            </div>
+
+            <svg
+              viewBox="0 0 680 110"
+              fill="none"
+              className="pipeline-svg"
+              aria-hidden="true"
+            >
+              {/* Animated connecting tracks */}
+              <path
+                d="M115 55 H295 M385 55 H565"
+                stroke="rgba(224, 182, 138, 0.22)"
+                strokeWidth="2"
+              />
+              <path
+                className="pipeline-energy-beam"
+                d="M115 55 H295 M385 55 H565"
+                stroke="url(#beamGrad)"
+                strokeWidth="3"
+                strokeLinecap="round"
+              />
+
+              <defs>
+                <linearGradient id="beamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#4ade80" />
+                  <stop offset="50%" stopColor="#e0b68a" />
+                  <stop offset="100%" stopColor="#61dafb" />
+                </linearGradient>
+              </defs>
+
+              {/* Node 1: Low-level CS */}
+              <g transform="translate(20, 18)">
+                <rect
+                  width="95"
+                  height="74"
+                  rx="14"
+                  fill="rgba(16, 30, 24, 0.95)"
+                  stroke="#4ade80"
+                  strokeWidth="1.5"
+                />
+                <text x="47.5" y="32" textAnchor="middle" className="node-tag">
+                  01 / CORE
+                </text>
+                <text x="47.5" y="54" textAnchor="middle" className="node-title">
+                  C &amp; C++
+                </text>
+              </g>
+
+              {/* Node 2: Full-Stack & 3D */}
+              <g transform="translate(292, 18)">
+                <rect
+                  width="96"
+                  height="74"
+                  rx="14"
+                  fill="rgba(16, 30, 24, 0.95)"
+                  stroke="#e0b68a"
+                  strokeWidth="1.5"
+                />
+                <text x="48" y="32" textAnchor="middle" className="node-tag">
+                  02 / WEBGL
+                </text>
+                <text x="48" y="54" textAnchor="middle" className="node-title">
+                  React · 3D
+                </text>
+              </g>
+
+              {/* Node 3: AI Automation */}
+              <g transform="translate(565, 18)">
+                <rect
+                  width="95"
+                  height="74"
+                  rx="14"
+                  fill="rgba(16, 30, 24, 0.95)"
+                  stroke="#61dafb"
+                  strokeWidth="1.5"
+                />
+                <text x="47.5" y="32" textAnchor="middle" className="node-tag">
+                  03 / AGENCY
+                </text>
+                <text x="47.5" y="54" textAnchor="middle" className="node-title">
+                  AI &amp; RAG
+                </text>
+              </g>
+            </svg>
+          </div>
+
+          {/* Animated Telemetry Metric Counters */}
+          <div className="about-metrics-strip">
+            <div className="metric-tile">
+              <span className="metric-value">17+</span>
+              <span className="metric-label">GitHub Repositories</span>
+            </div>
+            <div className="metric-tile">
+              <span className="metric-value">Fillara AI</span>
+              <span className="metric-label">AI Automation Agency</span>
+            </div>
+            <div className="metric-tile">
+              <span className="metric-value">KUET ’25</span>
+              <span className="metric-label">B.Sc. in CSE</span>
+            </div>
+            <div className="metric-tile">
+              <span className="metric-value">24/7</span>
+              <span className="metric-label">Autonomous RAG Agents</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. INTERACTIVE VISUAL TECH ARSENAL WITH REAL ICONS & BARS */}
+      <section className="visual-arsenal-section">
+        <div className="visual-arsenal-top">
+          <div>
+            <span className="pillar-tag">INTERACTIVE COMMAND DECK</span>
+            <h3>Engineering &amp; Automation Arsenal</h3>
+          </div>
+
+          {/* Filter Tabs */}
+          <div className="arsenal-filter-pills" role="tablist">
+            {DOMAIN_FILTERS.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                className={[
+                  "arsenal-filter-btn",
+                  activeDomain === tab.id ? "arsenal-filter-btn--active" : "",
+                ].join(" ")}
+                onClick={() => setActiveDomain(tab.id)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="visual-tech-grid">
+          {filteredStack.map((tech, idx) => (
+            <div
+              className="visual-tech-card"
+              key={tech.name}
+              style={{
+                "--tech-accent": tech.color,
+                animationDelay: `${idx * 45}ms`,
+              }}
+            >
+              <div className="visual-tech-card-top">
+                <div className="visual-tech-icon-box">
+                  <img src={tech.icon} alt={tech.name} loading="lazy" />
+                </div>
+                <span className="visual-tech-percent">{tech.level}</span>
+              </div>
+
+              <strong>{tech.name}</strong>
+
+              <div className="visual-tech-meter">
+                <div
+                  className="visual-tech-meter-fill"
+                  style={{ width: tech.level }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 3. INFINITE KINETIC TICKER TAPE */}
+      <div className="kinetic-marquee-Banner" aria-hidden="true">
+        <div className="kinetic-marquee-track">
+          <span>
+            ⚡ FILLARA AI AUTOMATION · 🧠 RAG PIPELINES · 🕸️ N8N AGENTS · 🎮
+            THREE.JS WEBGL · ⚛️ REACT &amp; NEXT.JS · ⚙️ C/C++ SYSTEMS · 🏛️ CSE
+            @ KUET · 🐳 DOCKER &amp; SUPABASE ·{" "}
+          </span>
+          <span>
+            ⚡ FILLARA AI AUTOMATION · 🧠 RAG PIPELINES · 🕸️ N8N AGENTS · 🎮
+            THREE.JS WEBGL · ⚛️ REACT &amp; NEXT.JS · ⚙️ C/C++ SYSTEMS · 🏛️ CSE
+            @ KUET · 🐳 DOCKER &amp; SUPABASE ·{" "}
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
