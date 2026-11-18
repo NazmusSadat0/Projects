@@ -83,34 +83,8 @@ export default function RoomSections({ section, onClose }) {
 
         {/* Full-width content wrapper */}
         <main className="portfolio-fullscreen-body">
-          {section === "projects" && (
-            <div className="portfolio-projects-grid">
-              {projects.map((project, index) => (
-                <article className="portfolio-project-card" key={project.title}>
-                  <div className="portfolio-project-header">
-                    <span className="portfolio-project-number">0{index + 1}</span>
-                    <small className="portfolio-project-tag">{project.tags}</small>
-                  </div>
 
-                  <h2>{project.title}</h2>
-                  <p>{project.text}</p>
-
-                  <div className="portfolio-links">
-                    {project.live && (
-                      <a href={project.live} target="_blank" rel="noreferrer">
-                        Live project ↗
-                      </a>
-                    )}
-                    {project.github && (
-                      <a href={project.github} target="_blank" rel="noreferrer">
-                        Source code ↗
-                      </a>
-                    )}
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
+          {section === "projects" && <ProjectsFullPage />}
 
           {section === "about" && (
             <AboutFullPage onNavigate={onClose} />
@@ -989,6 +963,306 @@ function AboutFullPage() {
           </span>
         </div>
       </div>
+    </div>
+  );
+}
+
+const FEATURED_PROJECT = {
+  id: "SYS_01 // FLAGSHIP DEPLOYMENT",
+  title: "KUET Empty Room & Space Management",
+  subtitle: "Real-Time Campus Classroom & Lab Availability Engine",
+  description:
+    "Built to eliminate classroom scheduling conflicts at Khulna University of Engineering & Technology. Tracks real-time room occupancy, routine slots, and empty lecture halls across campus departments with instant filtering.",
+  live: "https://empty-room-iota.vercel.app/", // <-- PASTE YOUR LIVE URL HERE
+  github: "https://github.com/NazmusSadat0/empty-room", // <-- PASTE YOUR REPO URL HERE
+  metrics: [
+    { label: "LATENCY", value: "< 80ms" },
+    { label: "DATABASE", value: "Supabase RT" },
+    { label: "STATUS", value: "Production" },
+  ],
+  stack: ["React", "Supabase", "JavaScript", "Tailwind / CSS3", "REST API"],
+};
+
+const LAB_PIPELINE = [
+  {
+    code: "BUILD_02 // LIVE PRODUCTION",
+    title: "Nazmus's 3D Interactive Studio",
+    category: "WebGL & Spatial UI",
+    progress: 100,
+    status: "LIVE ON NAZMUSSADAT.COM",
+    desc: "Custom 3D isometric developer room built with React Three Fiber, ACES Filmic lighting, sonar HUD projections, and Google Apps Script serverless telemetry.",
+    stack: ["Three.js", "React Three Fiber", "Vite", "Apps Script"],
+    link: "https://github.com/NazmusSadat0/Projects/tree/master/nazmus-portfolio",
+  },
+  {
+    code: "LAB_03 // SYSTEMS ARCHITECTURE",
+    title: "Campus Lost & Found Intelligence",
+    category: "Core C & Memory Systems",
+    progress: 90,
+    status: "CODEBASE COMPLETE",
+    desc: "Modular C-based intelligence system utilizing dynamic memory allocation, custom file persistence (items.txt), and fast keyword matching for campus item recovery.",
+    stack: ["C Language", "Dynamic Memory", "File I/O", "Modular CLI"],
+    link: "https://github.com/NazmusSadat0/Campus-Lost-And-Found-Intelligence-System",
+  },
+  {
+    code: "LAB_04 // IN STAGING",
+    title: "Fillara AI — Autonomous RAG & CSE Portal",
+    category: "AI Automation & Next.js",
+    progress: 72,
+    status: "IN ACTIVE DEVELOPMENT",
+    desc: "Next-gen department notice & CT rescheduling portal paired with autonomous n8n + RAG workflows for instant student and client notifications.",
+    stack: ["Next.js", "n8n Agents", "RAG Pipeline", "Supabase"],
+    link: "",
+  },
+];
+
+function ProjectsFullPage() {
+  return (
+    <div className="projects-command-layout">
+      {/* 1. FLAGSHIP SPOTLIGHT CASE STUDY */}
+      <article className="flagship-project-card">
+        {/* Left: Project Breakdown & Actions */}
+        <div className="flagship-content">
+          <div className="flagship-top-badges">
+            <span className="cyber-pill cyber-pill--gold">
+              ★ FEATURED FLAGSHIP
+            </span>
+            <span className="cyber-pill cyber-pill--green">
+              ● LIVE DEPLOYMENT
+            </span>
+          </div>
+
+          <span className="flagship-code">{FEATURED_PROJECT.id}</span>
+          <h2 className="flagship-title">{FEATURED_PROJECT.title}</h2>
+          <p className="flagship-subtitle">{FEATURED_PROJECT.subtitle}</p>
+          <p className="flagship-desc">{FEATURED_PROJECT.description}</p>
+
+          {/* Key Telemetry Metrics */}
+          <div className="flagship-metrics-row">
+            {FEATURED_PROJECT.metrics.map((m) => (
+              <div className="flagship-metric-box" key={m.label}>
+                <span>{m.label}</span>
+                <strong>{m.value}</strong>
+              </div>
+            ))}
+          </div>
+
+          {/* Tech Stack Pills */}
+          <div className="flagship-stack-row">
+            {FEATURED_PROJECT.stack.map((tech) => (
+              <span className="tech-badge" key={tech}>
+                <span className="tech-badge-dot" />
+                {tech}
+              </span>
+            ))}
+          </div>
+
+          {/* Direct Action Buttons */}
+          <div className="flagship-actions">
+            {FEATURED_PROJECT.live && (
+              <a
+                href={FEATURED_PROJECT.live}
+                target="_blank"
+                rel="noreferrer"
+                className="spotlight-btn spotlight-btn--primary"
+              >
+                <span>Launch Live System ↗</span>
+              </a>
+            )}
+            {FEATURED_PROJECT.github && (
+              <a
+                href={FEATURED_PROJECT.github}
+                target="_blank"
+                rel="noreferrer"
+                className="spotlight-btn spotlight-btn--ghost"
+              >
+                <span>Inspect Source Code ↗</span>
+              </a>
+            )}
+          </div>
+        </div>
+
+        {/* Right: Animated Interactive Spatial Blueprint Visualizer */}
+        <div className="flagship-visualizer" aria-hidden="true">
+          <div className="blueprint-window">
+            <div className="blueprint-header">
+              <div className="console-dots">
+                <span />
+                <span />
+                <span />
+              </div>
+              <span>KUET_SPACE_RADAR // LIVE_MATRIX</span>
+            </div>
+
+            <div className="blueprint-grid-canvas">
+              <svg viewBox="0 0 360 240" fill="none" className="blueprint-svg">
+                {/* Architectural Grid Lines */}
+                <path
+                  d="M20 60 H340 M20 120 H340 M20 180 H340 M120 20 V220 M240 20 V220"
+                  stroke="rgba(224, 182, 138, 0.14)"
+                  strokeWidth="1"
+                  strokeDasharray="4 4"
+                />
+
+                {/* Room Slot 1: Available */}
+                <g transform="translate(30, 30)">
+                  <rect
+                    width="80"
+                    height="45"
+                    rx="8"
+                    fill="rgba(74, 222, 128, 0.12)"
+                    stroke="#4ade80"
+                    strokeWidth="1.5"
+                  />
+                  <circle cx="16" cy="16" r="4" fill="#4ade80" />
+                  <text x="26" y="19" className="bp-room-code">
+                    CSE-301
+                  </text>
+                  <text x="12" y="36" className="bp-room-status bp-free">
+                    VACANT · NOW
+                  </text>
+                </g>
+
+                {/* Room Slot 2: Occupied */}
+                <g transform="translate(140, 30)">
+                  <rect
+                    width="80"
+                    height="45"
+                    rx="8"
+                    fill="rgba(248, 113, 113, 0.08)"
+                    stroke="rgba(248, 113, 113, 0.45)"
+                    strokeWidth="1.2"
+                  />
+                  <circle cx="16" cy="16" r="4" fill="#f87171" />
+                  <text x="26" y="19" className="bp-room-code">
+                    CSE-302
+                  </text>
+                  <text x="12" y="36" className="bp-room-status bp-busy">
+                    IN SESSION
+                  </text>
+                </g>
+
+                {/* Room Slot 3: Available */}
+                <g transform="translate(250, 30)">
+                  <rect
+                    width="80"
+                    height="45"
+                    rx="8"
+                    fill="rgba(74, 222, 128, 0.12)"
+                    stroke="#4ade80"
+                    strokeWidth="1.5"
+                  />
+                  <circle cx="16" cy="16" r="4" fill="#4ade80" />
+                  <text x="26" y="19" className="bp-room-code">
+                    LAB-204
+                  </text>
+                  <text x="12" y="36" className="bp-room-status bp-free">
+                    VACANT · NOW
+                  </text>
+                </g>
+
+                {/* Central Animated Query Node */}
+                <g transform="translate(95, 130)">
+                  <rect
+                    width="170"
+                    height="64"
+                    rx="12"
+                    fill="rgba(14, 26, 20, 0.95)"
+                    stroke="#e0b68a"
+                    strokeWidth="1.6"
+                  />
+                  <text x="85" y="26" textAnchor="middle" className="bp-node-label">
+                    SUPABASE REALTIME ENGINE
+                  </text>
+                  <text x="85" y="46" textAnchor="middle" className="bp-node-main">
+                    2 Rooms Available ✓
+                  </text>
+                </g>
+
+                {/* Animated Data Beams Connecting Rooms to Engine */}
+                <path
+                  className="pipeline-energy-beam"
+                  d="M70 75 V162 H95 M290 75 V162 H265"
+                  stroke="#4ade80"
+                  strokeWidth="2"
+                />
+              </svg>
+            </div>
+
+            <div className="blueprint-footer">
+              <span className="status-dot" />
+              <span>QUERY_ENGINE: ONLINE · ZERO SCHEDULING CONFLICTS</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      {/* 2. ACTIVE ENGINEERING LAB & BUILD PIPELINE */}
+      <section className="lab-pipeline-section">
+        <div className="lab-pipeline-header">
+          <div>
+            <span className="pillar-tag">ENGINEERING LAB // R&amp;D QUEUE</span>
+            <h3>Additional Builds &amp; Active Development</h3>
+          </div>
+          <span className="lab-pipeline-sub">
+            Live Telemetry on Current &amp; Upcoming Systems
+          </span>
+        </div>
+
+        <div className="lab-pipeline-grid">
+          {LAB_PIPELINE.map((item) => (
+            <article className="lab-build-card" key={item.title}>
+              <div className="lab-build-top">
+                <span className="lab-build-code">{item.code}</span>
+                <span
+                  className={[
+                    "lab-status-pill",
+                    item.progress === 100 ? "lab-status-pill--live" : "",
+                  ].join(" ")}
+                >
+                  {item.status}
+                </span>
+              </div>
+
+              <h4>{item.title}</h4>
+              <p>{item.desc}</p>
+
+              {/* Build Progress Meter */}
+              <div className="lab-progress-block">
+                <div className="lab-progress-labels">
+                  <span>BUILD COMPLETION</span>
+                  <strong>{item.progress}%</strong>
+                </div>
+                <div className="lab-progress-track">
+                  <div
+                    className="lab-progress-fill"
+                    style={{ width: `${item.progress}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="lab-card-footer">
+                <div className="lab-mini-tags">
+                  {item.stack.map((t) => (
+                    <span key={t}>{t}</span>
+                  ))}
+                </div>
+
+                {item.link && (
+                  <a
+                    href={item.link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="lab-repo-link"
+                  >
+                    Repo ↗
+                  </a>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

@@ -1926,3 +1926,353 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* =====================================================
+   FLAGSHIP PROJECT & ENGINEERING LAB SHOWCASE
+   ===================================================== */
+
+   /* Project section starts from here */
+
+.projects-command-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+/* 1. Flagship Spotlight Card */
+.flagship-project-card {
+  display: grid;
+  grid-template-columns: 1.15fr 0.95fr;
+  gap: 32px;
+  padding: 34px;
+  border-radius: 28px;
+  border: 1px solid rgba(224, 182, 138, 0.38);
+  background: radial-gradient(
+    circle at 85% 20%,
+    rgba(74, 222, 128, 0.1),
+    rgba(13, 24, 19, 0.92) 70%
+  );
+  box-shadow: 0 28px 64px rgba(0, 0, 0, 0.45);
+  align-items: center;
+}
+
+.flagship-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.flagship-top-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.flagship-code {
+  font: 600 11px ui-monospace, monospace;
+  letter-spacing: 0.14em;
+  color: #8fa698;
+  margin-top: 4px;
+}
+
+.flagship-title {
+  margin: 0;
+  font-size: clamp(26px, 3.5vw, 38px);
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #fffaf0;
+}
+
+.flagship-subtitle {
+  margin: -6px 0 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #e0b68a;
+}
+
+.flagship-desc {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: #b7c9be;
+}
+
+.flagship-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 4px 0;
+}
+
+.flagship-metric-box {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(245, 237, 223, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.flagship-metric-box span {
+  font: 600 10px ui-monospace, monospace;
+  letter-spacing: 0.1em;
+  color: #8fa698;
+}
+
+.flagship-metric-box strong {
+  font-size: 15px;
+  color: #ffffff;
+}
+
+.flagship-stack-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.flagship-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+/* Right: Interactive Blueprint Visualizer */
+.blueprint-window {
+  border-radius: 22px;
+  border: 1px solid rgba(245, 237, 223, 0.18);
+  background: rgba(9, 17, 13, 0.95);
+  overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.blueprint-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(245, 237, 223, 0.1);
+  font: 600 10.5px ui-monospace, monospace;
+  letter-spacing: 0.1em;
+  color: #9cb1a3;
+}
+
+.blueprint-grid-canvas {
+  padding: 16px;
+}
+
+.blueprint-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.bp-room-code {
+  fill: #fffaf0;
+  font: 700 10px ui-monospace, monospace;
+}
+
+.bp-room-status {
+  font: 600 8.5px ui-monospace, monospace;
+  letter-spacing: 0.06em;
+}
+
+.bp-free {
+  fill: #86efac;
+}
+
+.bp-busy {
+  fill: #fca5a5;
+}
+
+.bp-node-label {
+  fill: #8fa698;
+  font: 600 8.5px ui-monospace, monospace;
+  letter-spacing: 0.12em;
+}
+
+.bp-node-main {
+  fill: #e0b68a;
+  font: 700 13px Inter, sans-serif;
+}
+
+.blueprint-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: rgba(74, 222, 128, 0.07);
+  border-top: 1px solid rgba(74, 222, 128, 0.2);
+  font: 600 10.5px ui-monospace, monospace;
+  letter-spacing: 0.08em;
+  color: #86efac;
+}
+
+/* 2. Active Engineering Lab Pipeline */
+.lab-pipeline-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.lab-pipeline-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.lab-pipeline-header h3 {
+  margin: 4px 0 0;
+  font-size: 24px;
+  color: #fffaf0;
+}
+
+.lab-pipeline-sub {
+  font: 12px ui-monospace, monospace;
+  color: #8fa698;
+}
+
+.lab-pipeline-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.lab-build-card {
+  padding: 24px;
+  border-radius: 22px;
+  border: 1px solid rgba(245, 237, 223, 0.14);
+  background: rgba(14, 25, 20, 0.82);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  transition: transform 200ms ease, border-color 200ms ease;
+}
+
+.lab-build-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(224, 182, 138, 0.45);
+}
+
+.lab-build-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.lab-build-code {
+  font: 600 10px ui-monospace, monospace;
+  color: #8fa698;
+  letter-spacing: 0.08em;
+}
+
+.lab-status-pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font: 700 9.5px ui-monospace, monospace;
+  letter-spacing: 0.08em;
+  background: rgba(224, 182, 138, 0.15);
+  color: #e0b68a;
+  border: 1px solid rgba(224, 182, 138, 0.35);
+}
+
+.lab-status-pill--live {
+  background: rgba(74, 222, 128, 0.14);
+  color: #86efac;
+  border-color: rgba(74, 222, 128, 0.4);
+}
+
+.lab-build-card h4 {
+  margin: 0;
+  font-size: 19px;
+  color: #ffffff;
+}
+
+.lab-build-card p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: #adc0b4;
+  flex-grow: 1;
+}
+
+.lab-progress-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 6px;
+}
+
+.lab-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font: 600 10.5px ui-monospace, monospace;
+  color: #9cb1a3;
+}
+
+.lab-progress-labels strong {
+  color: #e0b68a;
+}
+
+.lab-progress-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.lab-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #4ade80, #e0b68a);
+  box-shadow: 0 0 12px rgba(224, 182, 138, 0.5);
+}
+
+.lab-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(245, 237, 223, 0.1);
+}
+
+.lab-mini-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.lab-mini-tags span {
+  font: 500 11px ui-monospace, monospace;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #cbd9d0;
+}
+
+.lab-repo-link {
+  font: 600 12px ui-monospace, monospace;
+  color: #e0b68a;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.lab-repo-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 960px) {
+  .flagship-project-card,
+  .lab-pipeline-grid {
+    grid-template-columns: 1fr;
+  }
+}
