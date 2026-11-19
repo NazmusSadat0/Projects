@@ -20,6 +20,7 @@ import CameraRig, {
 import RoomModel from "../scene/RoomModel";
 import RoomFinish from "../scene/RoomFinish";
 import RoomInteractions from "../scene/RoomInteractions";
+import GuestbookBoard from "../scene/GuestbookBoard"; // <-- 1. ADDED THIS
 
 import RoomLabels, {
   RoomLabelOverlay,
@@ -109,6 +110,7 @@ export default function RoomExperience() {
         <Canvas
           shadows
           dpr={[1, 2]}
+          frameloop={section ? "demand" : "always"}
           camera={{
             position: EYE_POSITION,
             fov: 50,
@@ -182,6 +184,7 @@ export default function RoomExperience() {
               onOpen={setSection}
             >
               <RoomModel onReady={handleReady} />
+              <GuestbookBoard /> {/* <-- 2. ADDED THIS */}
             </RoomInteractions>
 
             <RoomLabels elements={labelElements} />
@@ -203,7 +206,6 @@ export default function RoomExperience() {
           onHover={setHovered}
         />
 
-        {/* Visible screen-edge navigation buttons */}
         <button
           type="button"
           className="room-nav-arrow room-nav-arrow--left"
@@ -222,7 +224,6 @@ export default function RoomExperience() {
           ›
         </button>
 
-        {/* High-visibility onboarding HUD */}
         <aside
           className={[
             "room-guide",
@@ -260,7 +261,6 @@ export default function RoomExperience() {
           />
         )}
 
-        {/* Appears only when reached using keyboard focus. */}
         <nav
           className="room-keyboard-nav"
           aria-label="Portfolio sections"
