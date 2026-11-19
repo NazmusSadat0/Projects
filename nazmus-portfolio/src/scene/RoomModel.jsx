@@ -4,6 +4,8 @@ import {
   useState,
 } from "react";
 
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+
 import {
   useFrame,
   useLoader,
@@ -72,10 +74,12 @@ function addUVs(geometry) {
 }
 
 export default function RoomModel({ onReady }) {
-  const gltf = useLoader(
-    GLTFLoader,
-    "/models/room.glb"
-  );
+  
+  const gltf = useLoader(GLTFLoader, "/models/room.glb", (loader) => {
+  const draco = new DRACOLoader();
+  draco.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.7/");
+  loader.setDRACOLoader(draco);
+});
 
   const [preparedScene, setPreparedScene] = useState(null);
 

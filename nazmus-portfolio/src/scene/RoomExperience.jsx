@@ -1,12 +1,14 @@
 import {
   Component,
   Suspense,
+  lazy,
   useCallback,
+  useEffect,
   useRef,
   useState,
 } from "react";
 
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 
 import {
   ACESFilmicToneMapping,
@@ -20,14 +22,27 @@ import CameraRig, {
 import RoomModel from "../scene/RoomModel";
 import RoomFinish from "../scene/RoomFinish";
 import RoomInteractions from "../scene/RoomInteractions";
-import GuestbookBoard from "../scene/GuestbookBoard"; // <-- 1. ADDED THIS
+import GuestbookBoard from "../scene/GuestbookBoard";
 
 import RoomLabels, {
   RoomLabelOverlay,
 } from "./RoomLabels";
 
-import RoomSections from "../components/RoomSections.jsx";
 import RoomPreloader from "../components/RoomPreLoader.jsx";
+
+const RoomSections = lazy(() => import("../components/RoomSections.jsx"));
+
+function ShadowFreezer({ ready }) {
+  const gl = useThree((state) => state.gl);
+
+  useEffect(() => {
+    if (!ready) return;
+    gl.shadowMap.needsUpdate = true;
+    gl.shadowMap.autoUpdate = false;
+  }, [ready, gl]);
+
+  return null;
+}
 
 class SceneErrorBoundary extends Component {
   state = { error: null };
@@ -46,7 +61,6 @@ class SceneErrorBoundary extends Component {
         <div className="fallback" role="alert">
           <div>
             <p>The room could not load.</p>
-
             <p>
               {this.state.error.message ||
                 String(this.state.error)}
@@ -120,6 +134,7 @@ export default function RoomExperience() {
           gl={{
             antialias: true,
             alpha: false,
+            powerPreference: "high-performance",
           }}
           onCreated={({ gl }) => {
             gl.toneMapping = ACESFilmicToneMapping;
@@ -184,11 +199,13 @@ export default function RoomExperience() {
               onOpen={setSection}
             >
               <RoomModel onReady={handleReady} />
-              <GuestbookBoard /> {/* <-- 2. ADDED THIS */}
+              <GuestbookBoard />
             </RoomInteractions>
 
             <RoomLabels elements={labelElements} />
           </Suspense>
+
+          <ShadowFreezer ready={ready} />
 
           <CameraRig
             ready={ready}
@@ -255,10 +272,12 @@ export default function RoomExperience() {
         </aside>
 
         {section && (
-          <RoomSections
-            section={section}
-            onClose={closeSection}
-          />
+          <Suspense fallback={null}>
+            <RoomSections
+              section={section}
+              onClose={closeSection}
+            />
+          </Suspense>
         )}
 
         <nav
