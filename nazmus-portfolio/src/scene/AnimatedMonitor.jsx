@@ -6,11 +6,11 @@ import useReducedMotion from "../hooks/useReducedMotion";
 
 const lines = [
   "const portfolio = {",
-  '  name: "Nazmus",',
-  '  stack: ["React", "Three.js"],',
+  '  name: "Nazmus Sadat",',
+  '  stack: ["React", "Node.js", "Python"],',
   "  projects: [",
   '    "KUET Empty Room",',
-  '    "Farm Management",',
+  '    "Campus Lost & Found System",',
   "  ],",
   "};",
   "",
